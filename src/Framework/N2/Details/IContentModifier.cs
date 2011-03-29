@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using N2.Edit.Workflow;
+using N2.Definitions;
 
 namespace N2.Details
 {
 	/// <summary>
-	/// Applies modifications to a content item before it enters a state.
+	/// Applies modifications to an object before it enters a state.
 	/// </summary>
 	public interface IContentModifier
 	{
@@ -17,6 +18,6 @@ namespace N2.Details
 
 		/// <summary>Applies modifications to the given item.</summary>
 		/// <param name="item">The item to modify.</param>
-		void Modify(ContentItem item);
+		void Modify(IBindable item);
 	}
 }

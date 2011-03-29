@@ -17,8 +17,8 @@ namespace N2.Definitions
         int SortOrder { get; set; }
 
         /// <summary>Adds a containable control to a container and returns it.</summary>
-        /// <param name="container">The container onto which to add the containable control.</param>
-        /// <returns>The newly added control.</returns>
-        Control AddTo(Control container);
+        /// <param name="context">The context containing the container onto which to add the containable control.</param>
+		/// <remarks>The added control must be added to the Control property of the context.</remarks>
+        void AddTo(ContainableContext context);
     }
 }

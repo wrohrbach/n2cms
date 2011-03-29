@@ -1,5 +1,5 @@
-- IRedirect
-- Gmap
+- Rename web.n2.host.config to use _
+- IRedirect on content item
 - AttributeTransformerBase (ThreadId=250548)
 - content transformers/extractors (extract summary, parse wiki)
 - index template replaces default

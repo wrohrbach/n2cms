@@ -32,7 +32,7 @@ namespace N2.Edit
 		}
 
 
-		public Control AddTo(Control container)
+		public void AddTo(ContainableContext context)
 		{
 			throw new NotImplementedException();
 		}

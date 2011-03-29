@@ -17,13 +17,12 @@ namespace N2.Edit
 
 		#region IContainable Members
 
-		public virtual Control AddTo(Control container)
+		public virtual void AddTo(ContainableContext context)
 		{
 			var link = new LiteralControl(
 					string.Format("<a href='{0}' target='{1}' class='option'>{2}</a>", Url, Target, Title)
 				);
-			container.Controls.Add(link);
-			return link;
+			context.Add(link);
 		}
 
 		public string ContainerName { get; set; }

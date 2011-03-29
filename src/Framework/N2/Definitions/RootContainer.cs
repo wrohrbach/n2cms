@@ -16,9 +16,9 @@ namespace N2.Definitions
 		{
 		}
 
-		public override Control AddTo(Control container)
+		public override void AddTo(ContainableContext context)
 		{
-			return container;
+			context.Control = context.Container;
 		}
 	}
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using N2.Configuration;
 using N2.Tests.Fakes;
@@ -61,12 +62,11 @@ namespace N2.Tests.Edit
 			Context.Replace(engine);
 		}
 
-		protected IDictionary<string, Control> AddEditors(ComplexContainersItem item)
+		protected ContainableContext[] AddEditors(ComplexContainersItem item)
 		{
 			Type itemType = item.GetContentType();
 			Control editorContainer = new Control();
-			IDictionary<string, Control> added = editManager.AddEditors(definitions.GetDefinition(itemType), item, editorContainer, CreatePrincipal("someone"));
-			return added;
+			return editManager.AddEditors(definitions.GetDefinition(itemType), item, editorContainer, CreatePrincipal("someone")).ToArray();
 		}
 
 		protected bool savingVersionEventInvoked = false;
@@ -75,11 +75,12 @@ namespace N2.Tests.Edit
 			savingVersionEventInvoked = true;
 		}
 
+		[Obsolete]
 		protected void DoTheSaving(IPrincipal user, IItemEditor editor)
 		{
 			using (mocks.Playback())
 			{
-				editManager.Save(editor.CurrentItem, editor.AddedEditors, editor.VersioningMode, user);
+				editManager.Save(editor.CurrentItem, editor.Editors, editor.VersioningMode, user);
 			}
 		}
 
@@ -87,18 +88,18 @@ namespace N2.Tests.Edit
 		{
 			IItemEditor editor = mocks.StrictMock<IItemEditor>();
 
-			Dictionary<string, Control> editors = CreateEditorsForComplexContainersItem();
+			ContainableContext[] editors = CreateEditorsForComplexContainersItem(item);
 
 			using (mocks.Record())
 			{
 				Expect.On(editor).Call(editor.CurrentItem).Return(item).Repeat.Any();
-				Expect.On(editor).Call(editor.AddedEditors).Return(editors);
+				Expect.On(editor).Call(editor.Editors).Return(editors);
 				Expect.On(editor).Call(editor.VersioningMode).Return(versioningMode).Repeat.Any();
 			}
 			return editor;
 		}
 
-		protected static Dictionary<string, Control> CreateEditorsForComplexContainersItem()
+		protected static ContainableContext[] CreateEditorsForComplexContainersItem(ContentItem item)
 		{
 			Dictionary<string, Control> editors = new Dictionary<string, Control>();
 
@@ -114,7 +115,7 @@ namespace N2.Tests.Edit
 			((FreeTextArea)editors["MyProperty3"]).Text = "rock";
 			((CheckBox)editors["MyProperty4"]).Checked = true;
 
-			return editors;
+			return editors.Select(e => ContainableContext.WithControl(e.Key, item, e.Value)).ToArray();
 		}
 
 		protected static void AssertItemHasValuesFromEditors(ComplexContainersItem item)

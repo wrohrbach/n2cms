@@ -59,8 +59,15 @@ namespace N2.Web.UI.WebControls
 		}
 
 		/// <summary>Gets a dictionary of editor controls added this control.</summary>
-		public IDictionary<string, Control> AddedEditors { get; protected set; }
+		[Obsolete("Use Editors instead")]
+		public IDictionary<string, Control> AddedEditors
+		{ 
+			get { return Editors.ToDictionary(e => e.PropertyName, e => e.Control); } 
+		}
 
+		/// <summary>Gets a dictionary of editor controls added this control.</summary>
+		public ContainableContext[] Editors { get; protected set; }
+		
 		protected override HtmlTextWriterTag TagKey
 		{
 			get { return HtmlTextWriterTag.Div; }
@@ -121,7 +128,7 @@ namespace N2.Web.UI.WebControls
 					if (value.VersionOf != null && value.ID == 0)
 						VersioningMode = ItemEditorVersioningMode.SaveOnly;
 					EnsureChildControls();
-					Engine.EditManager.UpdateEditors(Definition, value, AddedEditors, Page.User);
+					Engine.EditManager.UpdateEditors(Definition, value, Editors, Page.User);
 				}
 				else
 				{
@@ -160,10 +167,10 @@ namespace N2.Web.UI.WebControls
 
 			if (definition != null)
 			{
-				AddedEditors = EditAdapter.AddDefinedEditors(definition, CurrentItem, this, Page.User);
+				Editors = EditAdapter.AddDefinedEditors(definition, CurrentItem, this, Page.User).ToArray();
 				if (!Page.IsPostBack)
 				{
-					EditAdapter.LoadAddedEditors(definition, CurrentItem, AddedEditors, Page.User);
+					EditAdapter.LoadAddedEditors(definition, CurrentItem, Editors, Page.User);
 				}
 			}
 
@@ -176,11 +183,12 @@ namespace N2.Web.UI.WebControls
 		}
 
 		/// <summary>Saves <see cref="CurrentItem"/> with the values entered in the form.</summary>
+		[Obsolete("Use CommandFactory")]
 		public ContentItem Save(ContentItem item, ItemEditorVersioningMode mode)
 		{
 			EnsureChildControls();
 			BinderContext = new CommandContext(GetDefinition(), item, "Unknown", Page.User, this, new N2.Edit.Web.PageValidator<CommandContext>(Page));
-			item = EditAdapter.SaveItem(item, AddedEditors, mode, Page.User);
+			item = EditAdapter.SaveItem(item, Editors, mode, Page.User);
 			if (Saved != null)
 				Saved.Invoke(this, new ItemEventArgs(item));
 			return item;
@@ -188,6 +196,7 @@ namespace N2.Web.UI.WebControls
 
 		/// <summary>Saves <see cref="CurrentItem"/> with the values entered in the form.</summary>
 		/// <returns>The saved item.</returns>
+		[Obsolete("Use CommandFactory")]
 		public ContentItem Save()
 		{
 			CurrentItem = Save(CurrentItem, VersioningMode);
@@ -231,7 +240,7 @@ namespace N2.Web.UI.WebControls
 					value.Content.ZoneName = ZoneName;
 				foreach (string key in AddedEditors.Keys)
 					BinderContext.GetDefinedDetails().Add(key);
-				var modifiedDetails = EditAdapter.UpdateItem(value.Definition, value.Content, AddedEditors, Page.User);
+				var modifiedDetails = EditAdapter.UpdateItem(value.Definition, value.Content, Editors, Page.User);
 				if (modifiedDetails.Length == 0)
 					return false;
 				foreach (string detailName in modifiedDetails)
@@ -251,7 +260,7 @@ namespace N2.Web.UI.WebControls
 			{
 				BinderContext = value;
 				EnsureChildControls();
-				Engine.EditManager.UpdateEditors(GetDefinition(), value.Content, AddedEditors, Page.User);
+				Engine.EditManager.UpdateEditors(GetDefinition(), value.Content, Editors, Page.User);
 			}
 			finally
 			{

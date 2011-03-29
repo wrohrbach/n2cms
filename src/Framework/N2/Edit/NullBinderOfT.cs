@@ -8,7 +8,7 @@ namespace N2.Edit
     /// <typeparam name="T">The type of model object (ignored)</typeparam>
     public class NullBinder<T> : IBinder<T>
     {
-        #region IBinder<ContentItem> Members
+        #region IBinder<T> Members
 
         public bool UpdateObject(T value)
         {

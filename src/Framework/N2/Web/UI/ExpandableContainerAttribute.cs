@@ -37,14 +37,13 @@ namespace N2.Web.UI
 		/// <summary>Adds the fieldset to a parent container and returns it.</summary>
 		/// <param name="container">The parent container onto which to add the container defined by this interface.</param>
 		/// <returns>The newly added fieldset.</returns>
-		public override Control AddTo(Control container)
+		public override void AddTo(ContainableContext context)
 		{
 			Panel fieldSet = new Panel();
 			fieldSet.ID = Name;
 			fieldSet.ToolTip = GetLocalizedText("Legend") ?? Legend;
 			fieldSet.CssClass = "expandable";
-			container.Controls.Add(fieldSet);
-			return fieldSet;
+			context.Add(fieldSet);
 		}
 	}
 }

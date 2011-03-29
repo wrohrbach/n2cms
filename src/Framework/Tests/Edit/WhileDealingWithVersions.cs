@@ -9,7 +9,8 @@ namespace N2.Tests.Edit
     [TestFixture]
     public class WhileDealingWithVersions : EditManagerTests
     {
-        [Test]
+		[Test]
+		[Obsolete]
         public void DoesntSaveVersion_ForNewItems()
         {
             ComplexContainersItem item = new ComplexContainersItem();
@@ -23,7 +24,8 @@ namespace N2.Tests.Edit
             AssertItemHasValuesFromEditors(item);
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void CanSaveVersion()
         {
             ComplexContainersItem item = new ComplexContainersItem();
@@ -40,7 +42,8 @@ namespace N2.Tests.Edit
             AssertItemHasValuesFromEditors(item);
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void CanSave_ItemAndVersion()
         {
             ComplexContainersItem item = new ComplexContainersItem();
@@ -57,7 +60,8 @@ namespace N2.Tests.Edit
             AssertItemHasValuesFromEditors(item);
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void CanSave_VersionOnly()
         {
             ComplexContainersItem item = new ComplexContainersItem();
@@ -83,7 +87,8 @@ namespace N2.Tests.Edit
             AssertItemHasValuesFromEditors(version);
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void DisabledVersioning_DoesntSaveVersion()
         {
             editManager.EnableVersioning = false;
@@ -101,7 +106,8 @@ namespace N2.Tests.Edit
             mocks.VerifyAll();
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void SaveVersionAsMaster_IsMadeMasterVersion()
         {
             ComplexContainersItem currentMaster = new ComplexContainersItem(1, "current master");
@@ -121,7 +127,8 @@ namespace N2.Tests.Edit
 			Assert.That(persister.Repository.Get(1), Is.EqualTo(currentMaster));
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void VersionOnly_WhenNewItem_SavesIt_ButUnpublishesIt()
         {
             ComplexContainersItem newItem = new ComplexContainersItem(0, "an item");
@@ -136,7 +143,8 @@ namespace N2.Tests.Edit
             Assert.IsNull(newItem.Published);
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void Save_WhenUnpublished_PublishesItem()
         {
             ComplexContainersItem newItem = new ComplexContainersItem(1, "an item");
@@ -155,7 +163,8 @@ namespace N2.Tests.Edit
             Assert.Greater(newItem.Published, DateTime.Now.AddSeconds(-10));
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void SaveVersionAsMaster_WhenMasterIsUnpublished_PublishesItem()
         {
             ComplexContainersItem currentMaster = new ComplexContainersItem(1, "current master");
@@ -179,7 +188,8 @@ namespace N2.Tests.Edit
             Assert.Greater(currentMaster.Published, DateTime.Now.AddSeconds(-10));
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void SavingVersion_InvokesEvent()
         {
             savingVersionEventInvoked = false;
@@ -199,7 +209,8 @@ namespace N2.Tests.Edit
             Assert.IsTrue(savingVersionEventInvoked, "The saving version event wasn't invoked");
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void SavingItem_ThatIsNotVersionable_DoesntStoreVersion()
         {
             NotVersionableItem item = new NotVersionableItem();
@@ -216,6 +227,7 @@ namespace N2.Tests.Edit
 		}
 
 		[Test]
+		[Obsolete]
 		public void SavingItem_ThatIsNotVersionable_DoesntStoreVersion_LegacyAttribute()
 		{
 			LegacyNotVersionableItem item = new LegacyNotVersionableItem();
@@ -231,7 +243,8 @@ namespace N2.Tests.Edit
 			mocks.VerifyAll();
 		}
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void SavingVersionEvent_IsNotInvoked_WhenNewItem()
         {
             savingVersionEventInvoked = false;

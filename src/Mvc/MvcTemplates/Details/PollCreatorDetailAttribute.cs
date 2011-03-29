@@ -4,6 +4,7 @@ using System.Web.UI.WebControls;
 using N2.Templates.Details;
 using N2.Templates.Mvc.Models.Parts;
 using N2.Templates.Mvc.Models.Parts.Questions;
+using N2.Definitions;
 
 namespace N2.Templates.Mvc.Details
 {
@@ -53,9 +54,9 @@ namespace N2.Templates.Mvc.Details
 			base.UpdateEditor(questionItem, editor);
 		}
 
-		public override Control AddTo(Control container)
+		public override void AddTo(ContainableContext context)
 		{
-			Control panel = AddPanel(container);
+			Control panel = AddPanel(context.Container);
 			
 			Label label = new Label();
 			label.ID = Name + "-Label";
@@ -72,7 +73,7 @@ namespace N2.Templates.Mvc.Details
 			cb.Text = CreateNewText;
 			panel.Controls.Add(cb);
 
-			return base.AddTo(container);
+			base.AddTo(context);
 		}
 
 		private string GetTextBoxName()

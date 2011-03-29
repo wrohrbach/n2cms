@@ -380,9 +380,9 @@ namespace N2.Edit
 			set { ie.ZoneName = value; }
 		}
 
-		public IDictionary<string, System.Web.UI.Control> AddedEditors
+		public ContainableContext[] Editors
 		{
-			get { return ie.AddedEditors; }
+			get { return ie.Editors; }
 		}
 
 		public event EventHandler<ItemEventArgs> Saved

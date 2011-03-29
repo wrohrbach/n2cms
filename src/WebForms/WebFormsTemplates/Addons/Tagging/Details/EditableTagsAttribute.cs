@@ -5,6 +5,7 @@ using N2.Collections;
 using N2.Details;
 using System.Web.UI;
 using System;
+using N2.Definitions;
 
 namespace N2.Addons.Tagging.Details
 {
@@ -131,9 +132,9 @@ namespace N2.Addons.Tagging.Details
 			return null;
 		}
 
-		public override Control AddTo(Control container)
+		public override void AddTo(ContainableContext context)
 		{
-			return AddEditor(container);
+			context.Control = AddEditor(context.Container);
 		}
 
 		protected override Control AddEditor(Control container)

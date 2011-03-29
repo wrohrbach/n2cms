@@ -13,6 +13,7 @@ namespace N2.Templates.Tests.Wiki
 {
 	using N2.Addons.Wiki;
 	using N2.Persistence;
+	using N2.Engine;
 
     [TestFixture]
     public class RenderingWikiText : ItemTestsBase
@@ -30,11 +31,11 @@ namespace N2.Templates.Tests.Wiki
             var urlParser = new FakeUrlParser();
 			wiki = new N2.Addons.Wiki.Items.Wiki();
             wiki.Name = "wiki";
-			((IDependentEntity<IUrlParser>)wiki).Set(urlParser);
+			((IInjectable<IUrlParser>)wiki).Set(urlParser);
 			article = new N2.Addons.Wiki.Items.WikiArticle();
             article.Name = "existing-article";
             article.SavedBy = "admin";
-			((IDependentEntity<IUrlParser>)article).Set(urlParser);
+			((IInjectable<IUrlParser>)article).Set(urlParser);
             article.AddTo(wiki);
 
             parser = new WikiParser();

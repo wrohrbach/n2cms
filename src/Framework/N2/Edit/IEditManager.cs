@@ -35,27 +35,28 @@ namespace N2.Edit
 		/// <param name="editorContainer">The container onto which add the editors.</param>
 		/// <param name="user">The user whose permissions to use when adding editors.</param>
 		/// <returns>A list of added editors.</returns>
-		IDictionary<string, Control> AddEditors(ItemDefinition definition, ContentItem item, Control editorContainer, IPrincipal user);
+		IEnumerable<ContainableContext> AddEditors(ItemDefinition definition, ContentItem item, Control editorContainer, IPrincipal user);
 
 		/// <summary>Sets initial editor values.</summary>
 		/// <param name="addedEditors">Previously added editor controls.</param>
 		/// <param name="item">The content item to use for update.</param>
 		/// <param name="user">The current user.</param>
-		void UpdateEditors(ItemDefinition definitions, ContentItem item, IDictionary<string, Control> addedEditors, IPrincipal user);
+		void UpdateEditors(ItemDefinition definitions, ContentItem item, IEnumerable<ContainableContext> addedEditors, IPrincipal user);
 
 		/// <summary>Updates the item with the values from the editors.</summary>
 		/// <param name="item">The item to update.</param>
 		/// <param name="addedEditors">The previously added editors.</param>
 		/// <param name="user">The user for filtering updatable editors.</param>
 		/// <returns>Details that were updated.</returns>
-		string[] UpdateItem(ItemDefinition definitions, ContentItem item, IDictionary<string, Control> addedEditors, IPrincipal user);
+		string[] UpdateItem(ItemDefinition definitions, ContentItem item, IEnumerable<ContainableContext> addedEditors, IPrincipal user);
 
 		/// <summary>Saves an item using values from the supplied item editor.</summary>
 		/// <param name="item">The item to update.</param>
 		/// <param name="addedEditors">The editors to update the item with.</param>
 		/// <param name="versioningMode">How to treat the item beeing saved in respect to versioning.</param>
 		/// <param name="user">The user that is performing the saving.</param>
-		ContentItem Save(ContentItem item, IDictionary<string, Control> addedEditors, ItemEditorVersioningMode versioningMode, IPrincipal user);
+		[Obsolete("Use N2.Context.Current.Resolve<CommandDispatcher>().Save/Publish", false)]
+		ContentItem Save(ContentItem item, IEnumerable<ContainableContext> addedEditors, ItemEditorVersioningMode versioningMode, IPrincipal user);
 
 		/// <summary>Gets the filter to be applied to items displayed in edit mode.</summary>
 		/// <param name="user">The user for whom to apply the filter.</param>

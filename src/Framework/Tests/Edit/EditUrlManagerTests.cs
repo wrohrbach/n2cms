@@ -24,8 +24,10 @@ namespace N2.Tests.Edit
 		}
 
 		[SetUp]
-		public virtual void SetUp()
+		public override void SetUp()
 		{
+			base.SetUp();
+
 			editUrlManager = new EditUrlManager(new EditSection());
 		}
 	}

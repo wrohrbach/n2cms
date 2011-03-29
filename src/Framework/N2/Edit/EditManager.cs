@@ -80,27 +80,28 @@ namespace N2.Edit
 		/// <param name="itemType">The type of content item whose editors to add.</param>
 		/// <param name="editorContainer">The container onto which add the editors.</param>
 		/// <param name="user">The user whose credentials will be queried.</param>
-		public virtual IDictionary<string, Control> AddEditors(ItemDefinition definition, ContentItem item, Control editorContainer, IPrincipal user)
+		public virtual IEnumerable<ContainableContext> AddEditors(ItemDefinition definition, ContentItem item, Control editorContainer, IPrincipal user)
 		{
-			IDictionary<string, Control> addedEditors = new Dictionary<string, Control>();
+			List<ContainableContext> addedEditors = new List<ContainableContext>();
 			var root = interfaceBuilder.Build(definition.Containers.OfType<IContainable>(), definition.Editables.OfType<IContainable>());
 			AddEditorsRecursive(item, editorContainer, root, user, addedEditors);
 			return addedEditors;
 		}
 
-		private void AddEditorsRecursive(ContentItem item, Control containerControl, HierarchyNode<IContainable> node, IPrincipal user, IDictionary<string, Control> addedEditors)
+		private void AddEditorsRecursive(ContentItem item, Control containerControl, HierarchyNode<IContainable> node, IPrincipal user, ICollection<ContainableContext> addedEditors)
 		{
 			foreach (var childNode in node.Children
 				.Where(n => securityManager.IsAuthorized(n.Current, user, item))
 				.OrderBy(n => n.Current.SortOrder))
 			{
-				var editorControl = childNode.Current.AddTo(containerControl);
+				var context = ContainableContext.WithContainer(childNode.Current.Name, item, containerControl);
+				childNode.Current.AddTo(context);
 				if (childNode.Current is IEditable)
 				{
-					addedEditors[childNode.Current.Name] = editorControl;
-					OnAddedEditor(new ControlEventArgs(editorControl));
+					addedEditors.Add(context);
+					OnAddedEditor(new ControlEventArgs(context.Control));
 				}
-				AddEditorsRecursive(item, editorControl, childNode, user, addedEditors);
+				AddEditorsRecursive(item, context.Control, childNode, user, addedEditors);
 			}
 		}
 
@@ -108,7 +109,7 @@ namespace N2.Edit
 		/// <param name="addedEditors">Previously added editor controls.</param>
 		/// <param name="item">The content item to use for update.</param>
 		/// <param name="user">The current user.</param>
-		public virtual void UpdateEditors(ItemDefinition definition, ContentItem item, IDictionary<string, Control> addedEditors, IPrincipal user)
+		public virtual void UpdateEditors(ItemDefinition definition, ContentItem item, IEnumerable<ContainableContext> addedEditors, IPrincipal user)
 		{
 			if (item == null) throw new ArgumentNullException("item");
 			if (addedEditors == null) throw new ArgumentNullException("addedEditors");
@@ -118,10 +119,14 @@ namespace N2.Edit
 			foreach (IEditable e in definition.Editables)
 			{
 				if (!securityManager.IsAuthorized(e, user, item))
-					continue; 
+					continue;
 
-				if (addedEditors.ContainsKey(e.Name) && addedEditors[e.Name] != null)
-					e.UpdateEditor(item, addedEditors[e.Name]);
+				var context = addedEditors.FirstOrDefault(c => c.PropertyName == e.Name);
+				if (context != null && context.Control != null)
+				{
+					context.Content = item;
+					e.UpdateEditor(context);
+				}
 			}
 		}
 
@@ -130,7 +135,7 @@ namespace N2.Edit
 		/// <param name="addedEditors">The previously added editors.</param>
 		/// <param name="user">The user for filtering updatable editors.</param>
 		/// <returns>Whether any property on the item was updated.</returns>
-		public virtual string[] UpdateItem(ItemDefinition definition, ContentItem item, IDictionary<string, Control> addedEditors, IPrincipal user)
+		public virtual string[] UpdateItem(ItemDefinition definition, ContentItem item, IEnumerable<ContainableContext> addedEditors, IPrincipal user)
 		{
 			if (item == null) throw new ArgumentNullException("item");
 			if (addedEditors == null) throw new ArgumentNullException("addedEditors");
@@ -142,10 +147,13 @@ namespace N2.Edit
 				if (!securityManager.IsAuthorized(e, user, item))
 					continue;
 
-				if (addedEditors.ContainsKey(e.Name))
+				var context = addedEditors.FirstOrDefault(c => c.PropertyName == e.Name);
+				if (context != null && context.Control != null)
 				{
-					bool wasUpdated = e.UpdateItem(item, addedEditors[e.Name]);
-					if (wasUpdated)
+					context.Content = item;
+
+					e.UpdateItem(context);
+					if (context.WasUpdated)
 						updatedDetails.Add(e.Name);
 				}
 			}
@@ -165,8 +173,8 @@ namespace N2.Edit
 		/// <param name="addedEditors">The editors to update the item with.</param>
 		/// <param name="versioningMode">How to treat the item beeing saved in respect to versioning.</param>
 		/// <param name="user">The user that is performing the saving.</param>
-		public virtual ContentItem Save(ContentItem item, IDictionary<string, Control> addedEditors,
-		                                ItemEditorVersioningMode versioningMode, IPrincipal user)
+		[Obsolete("Use N2.Context.Current.Resolve<CommandDispatcher>().Save/Publish", false)]
+		public virtual ContentItem Save(ContentItem item, IEnumerable<ContainableContext> addedEditors, ItemEditorVersioningMode versioningMode, IPrincipal user)
 		{
 			// when an unpublished version is saved and published
 			if (versioningMode == ItemEditorVersioningMode.SaveAsMaster)
@@ -221,14 +229,14 @@ namespace N2.Edit
 		#region Helper
 
 		/// <summary>Applies defined modifications to the editors.</summary>
-		public virtual void ApplyModifications(ItemDefinition definition, IDictionary<string, Control> addedEditors)
+		public virtual void ApplyModifications(ItemDefinition definition, IEnumerable<ContainableContext> addedEditors)
 		{
-			foreach (string name in addedEditors.Keys)
+			foreach (var context in addedEditors)
 			{
-				foreach (EditorModifierAttribute em in definition.GetModifiers(name))
+				foreach (EditorModifierAttribute em in definition.GetModifiers(context.PropertyName))
 				{
-					Control editor = addedEditors[em.Name];
-					em.Modify(editor);
+					if (context != null && context.Control != null)
+						em.Modify(context.Control);
 				}
 			}
 		}
@@ -274,7 +282,7 @@ namespace N2.Edit
 				ItemSaved(this, e);
 		}
 
-		private ContentItem SaveAsMaster(ContentItem item, IDictionary<string, Control> addedEditors, IPrincipal user)
+		private ContentItem SaveAsMaster(ContentItem item, IEnumerable<ContainableContext> addedEditors, IPrincipal user)
 		{
 			using (ITransaction tx = persister.Repository.BeginTransaction())
 			{
@@ -301,7 +309,7 @@ namespace N2.Edit
 			}
 		}
 
-		private ContentItem SaveOnly(ContentItem item, IDictionary<string, Control> addedEditors, IPrincipal user)
+		private ContentItem SaveOnly(ContentItem item, IEnumerable<ContainableContext> addedEditors, IPrincipal user)
 		{
 			bool wasUpdated = UpdateItem(definitions.GetDefinition(item.GetContentType()), item, addedEditors, user).Length > 0;
 			if (wasUpdated || IsNew(item))
@@ -321,7 +329,7 @@ namespace N2.Edit
 			return item;
 		}
 
-		private ContentItem VersionAndSave(ContentItem item, IDictionary<string, Control> addedEditors, IPrincipal user)
+		private ContentItem VersionAndSave(ContentItem item, IEnumerable<ContainableContext> addedEditors, IPrincipal user)
 		{
 			using (ITransaction tx = persister.Repository.BeginTransaction())
 			{
@@ -355,7 +363,7 @@ namespace N2.Edit
 			}
 		}
 
-		private ContentItem VersionOnly(ContentItem item, IDictionary<string, Control> addedEditors, IPrincipal user)
+		private ContentItem VersionOnly(ContentItem item, IEnumerable<ContainableContext> addedEditors, IPrincipal user)
 		{
 			using (ITransaction tx = persister.Repository.BeginTransaction())
 			{

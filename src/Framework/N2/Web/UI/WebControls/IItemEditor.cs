@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
+using N2.Definitions;
 
 namespace N2.Web.UI.WebControls
 {
@@ -16,7 +17,7 @@ namespace N2.Web.UI.WebControls
 		string ZoneName { get; set; }
 
 		/// <summary>Map of editor names and controls added to this item editor.</summary>
-		IDictionary<string, Control> AddedEditors { get; }
+		ContainableContext[] Editors { get; }
 
 		event EventHandler<ItemEventArgs> Saved;
 	}

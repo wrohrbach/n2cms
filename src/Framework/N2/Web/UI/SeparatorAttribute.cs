@@ -17,11 +17,10 @@ namespace N2.Web.UI
 		{
 		}
 
-		public override System.Web.UI.Control AddTo(System.Web.UI.Control container)
+		public override void AddTo(ContainableContext context)
 		{
 			var hr = new Hr();
-			container.Controls.Add(hr);
-			return hr;
+			context.Add(hr);
 		}
 	}
 }

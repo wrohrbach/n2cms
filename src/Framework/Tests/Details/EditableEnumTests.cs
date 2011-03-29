@@ -2,6 +2,7 @@
 using N2.Details;
 using NUnit.Framework;
 using System.Web.UI.WebControls;
+using N2.Definitions;
 
 namespace N2.Tests.Details
 {
@@ -19,22 +20,29 @@ namespace N2.Tests.Details
 
         private EnumableItem item;
 
+		static T AddTo<T>(IEditable editable, ContentItem item, Control container) where T: Control
+		{
+			var context = ContainableContext.WithContainer(editable.Name, item, container);
+			editable.AddTo(context);
+			return context.Control as T;
+		}
+
         [SetUp]
         public void SetUp()
         {
-            testBench = new Page();
             intEditable = new EditableEnumAttribute("Integer", 0, typeof(enumDays)) { Name = "DaysInteger" };
             stringEditable = new EditableEnumAttribute("String", 1, typeof(enumDays)) { Name = "DaysString" };
             enumEditable = new EditableEnumAttribute("Enum", 2, typeof(enumDays)) { Name = "DaysEnum" };
 
-            intEditor = (DropDownList)intEditable.AddTo(testBench);
-            stringEditor = (DropDownList)stringEditable.AddTo(testBench);
-            enumEditor = (DropDownList)enumEditable.AddTo(testBench);
+			item = new EnumableItem();
+			item.DaysEnum = enumDays.Mon;
+			item.DaysInteger = 1;
+			item.DaysString = "Mon";
 
-            item = new EnumableItem();
-            item.DaysEnum = enumDays.Mon;
-            item.DaysInteger = 1;
-            item.DaysString = "Mon";
+			testBench = new Page();
+			intEditor = AddTo<DropDownList>(intEditable, item, testBench);
+			stringEditor = AddTo<DropDownList>(stringEditable, item, testBench);
+			enumEditor = AddTo<DropDownList>(enumEditable, item, testBench);
         }
 
         [Test]

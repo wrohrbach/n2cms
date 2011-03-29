@@ -48,15 +48,18 @@ namespace N2.Web.UI.WebControls
 
 		protected void AddEditable()
 		{
-			editable = GetEditable(CurrentItem.GetContentType());
-			editor = editable.AddTo(this);
+			editable = GetEditable(CurrentItem);
+			var context = ContainableContext.WithContainer(PropertyName, CurrentItem, this);
+			editable.AddTo(context);
+			Editor = context.Control;
+
 			if (!Page.IsPostBack)
-				editable.UpdateEditor(CurrentItem, editor);
+				editable.UpdateEditor(context);
 		}
 
-		private IEditable GetEditable(Type itemType)
+		private IEditable GetEditable(ContentItem item)
 		{
-			foreach (IEditable editable in N2.Context.Definitions.GetDefinition(itemType).Editables)
+			foreach (IEditable editable in N2.Context.Definitions.GetDefinition(item).Editables)
 				if (editable.Name == PropertyName)
 					if (N2.Context.Current.SecurityManager.IsAuthorized(editable, Page.User, CurrentItem))
 						return editable;

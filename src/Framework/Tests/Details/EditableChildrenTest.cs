@@ -61,9 +61,10 @@ namespace N2.Tests.Details
 
             FakeEditorContainer p = new FakeEditorContainer();
             p.CurrentItem = new DecoratedItem();
-            var editor = attribute.AddTo(p);
+			var context = ContainableContext.WithContainer("EditableChildren", p.CurrentItem, p);
+            attribute.AddTo(context);
 
-            Assert.That(editor, Is.TypeOf<ItemEditorList>());
+            Assert.That(context.Control, Is.TypeOf<ItemEditorList>());
         }
 
         [Test]
@@ -75,7 +76,9 @@ namespace N2.Tests.Details
             FakeEditorContainer p = new FakeEditorContainer();
             p.CurrentItem = new DecoratedItem();
 
-            var editor = attribute.AddTo(p) as ItemEditorList;
+			var context = ContainableContext.WithContainer("EditableChildren", p.CurrentItem, p);
+			attribute.AddTo(context);
+            var editor = context.Control as ItemEditorList;
             Assert.That(editor.ParentItem, Is.EqualTo(p.CurrentItem));
         }
 
@@ -88,8 +91,10 @@ namespace N2.Tests.Details
             FakeEditorContainer p = new FakeEditorContainer();
             p.CurrentItem = new DecoratedItem();
 
-            var editor = attribute.AddTo(p) as ItemEditorList;
-            editor.Parts = new FakePartsAdapter();
+			var context = ContainableContext.WithContainer("EditableChildren", p.CurrentItem, p);
+			attribute.AddTo(context);
+			var editor = context.Control as ItemEditorList;
+			editor.Parts = new FakePartsAdapter();
 
             editor.GetType()
                 .GetMethod("CreateChildControls", BindingFlags.NonPublic | BindingFlags.Instance)
@@ -107,9 +112,11 @@ namespace N2.Tests.Details
             FakeEditorContainer p = new FakeEditorContainer();
             p.CurrentItem = new DecoratedItem();
 
-            var editor = attribute.AddTo(p) as ItemEditorList;
-            editor.Parts = new FakePartsAdapter();
-            attribute.UpdateEditor(p.CurrentItem, editor);
+			var context = ContainableContext.WithContainer("EditableChildren", p.CurrentItem, p);
+			attribute.AddTo(context);
+			var editor = context.Control as ItemEditorList;
+			editor.Parts = new FakePartsAdapter();
+            attribute.UpdateEditor(ContainableContext.WithControl("GenericChildren", p.CurrentItem, editor));
 
             editor.GetType()
                 .GetMethod("CreateChildControls", BindingFlags.NonPublic | BindingFlags.Instance)
@@ -175,7 +182,7 @@ namespace N2.Tests.Details
                 }
             }
 
-            public IDictionary<string, Control> AddedEditors
+            public ContainableContext[] Editors
             {
                 get { throw new NotImplementedException(); }
             }

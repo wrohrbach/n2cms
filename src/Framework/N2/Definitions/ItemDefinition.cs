@@ -221,17 +221,6 @@ namespace N2.Definitions
 			return AllowedZoneNames.Contains(zoneName);
 		}
 
-		///// <summary>Gets editable attributes available to user.</summary>
-		///// <returns>A filtered list of editable fields.</returns>
-		//public IList<IEditable> GetEditables(IPrincipal user)
-		//{
-		//    var filteredList = new List<IEditable>();
-		//    foreach (IEditable e in Editables)
-		//        if (e.IsAuthorized(user))
-		//            filteredList.Add(e);
-		//    return filteredList;
-		//}
-
 		/// <summary>Gets the editor modifications for the specified detail name.</summary>
 		/// <param name="detailName"></param>
 		/// <returns></returns>

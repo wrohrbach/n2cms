@@ -29,7 +29,7 @@ namespace N2.Details
 			get { return ContentState.New; }
 		}
 
-		public void Modify(ContentItem item)
+		public void Modify(IBindable item)
 		{
 			if (Name == null)
 				return;

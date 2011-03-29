@@ -12,6 +12,7 @@ using N2.Web;
 using N2.Details;
 using N2.Persistence.Proxying;
 using N2.Persistence.NH;
+using N2.Engine;
 
 namespace N2.Edit.Tests.LinkTracker
 {
@@ -158,7 +159,7 @@ namespace N2.Edit.Tests.LinkTracker
 				new FakePathProvider(((FakeFileSystem) Context.Current.Resolve<IFileSystem>()).BasePath);
 
 			RootDirectory rootDir = CreateOneItem<RootDirectory>(4, "FileSystem", root);
-			((IDependentEntity<IUrlParser>)rootDir).Set(new UrlParser(persister, null, new Host(null, 1, 1), new HostSection()));
+			((IInjectable<IUrlParser>)rootDir).Set(new UrlParser(persister, null, new Host(null, 1, 1), new HostSection()));
 
 			root["TestDetail"] = @"<a href=""/FileSystem/upload/File.txt"">download pdf</a>";
 			persister.Save(root);

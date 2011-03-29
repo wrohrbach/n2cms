@@ -141,12 +141,40 @@ namespace N2.Details
 		/// <param name="item">The object to update.</param>
 		/// <param name="editor">The editor contorl whose values to update the object with.</param>
 		/// <returns>True if the item was changed (and needs to be saved).</returns>
-		public abstract bool UpdateItem(ContentItem item, Control editor);
+		public virtual bool UpdateItem(ContentItem item, Control editor)
+		{
+			return false;
+		}
 
 		/// <summary>Updates the editor with data from the item.</summary>
 		/// <param name="item">The content item containing the values to bind to the editor.</param>
 		/// <param name="editor">The editor to be bound with data from the item.</param>
-		public abstract void UpdateEditor(ContentItem item, Control editor);
+		public virtual void UpdateEditor(ContentItem item, Control editor)
+		{
+		}
+
+
+		#region IEditable Members
+
+		/// <summary>Updates the object with the values from the editor.</summary>
+		/// <param name="context">Contains parameters to act upon.</param>
+		public virtual void UpdateItem(ContainableContext context)
+		{
+			var item = context.Content as ContentItem;
+			if (item != null)
+				context.WasUpdated = UpdateItem(item, context.Control);
+		}
+
+		/// <summary>Updates the editor with data from the item.</summary>
+		/// <param name="context">Contains parameters to act upon.</param>
+		public virtual void UpdateEditor(ContainableContext context)
+		{
+			var item = context.Content as ContentItem;
+			if (item != null)
+				UpdateEditor(item, context.Control);
+		}
+
+		#endregion
 
 		/// <summary>Gets or sets the name of the detail (property) on the content item's object.</summary>
 		public string Name
@@ -173,9 +201,9 @@ namespace N2.Details
 		/// <param name="container">The container onto which the panel is added.</param>
 		/// <returns>A reference to the addeed editor.</returns>
 		/// <remarks>Please note that this method was abstract before version 1.3.1. It's now recommended to add the editor through the <see cref="AddEditor"/> method.</remarks>
-		public virtual Control AddTo(Control container)
+		public virtual void AddTo(ContainableContext context)
 		{
-			Control panel = AddPanel(container);
+			Control panel = AddPanel(context.Container);
 			Label label = AddLabel(panel);
 			Control editor = AddEditor(panel);
 			if (label != null && editor != null && !string.IsNullOrEmpty(editor.ID))
@@ -188,7 +216,7 @@ namespace N2.Details
 
 			AddHelp(panel);
 
-			return editor;
+			context.Control = editor;
 		}
 
 		protected virtual Control AddHelp(Control container)
@@ -453,7 +481,7 @@ namespace N2.Details
 			get { return ContentState.New; }
 		}
 
-		void IContentModifier.Modify(ContentItem item)
+		void IContentModifier.Modify(IBindable item)
 		{
 			if (DefaultValue != null)
 				item[Name] = DefaultValue;

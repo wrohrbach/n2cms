@@ -3,6 +3,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using N2.Templates.Items;
 using EditableOptionsAttribute=N2.Templates.Details.EditableOptionsAttribute;
+using N2.Definitions;
 
 namespace N2.Templates.Details
 {
@@ -52,9 +53,9 @@ namespace N2.Templates.Details
             base.UpdateEditor(questionItem, editor);
         }
 
-        public override Control AddTo(Control container)
+		public override void AddTo(ContainableContext context)
         {
-            Control panel = AddPanel(container);
+            Control panel = AddPanel(context.Container);
 			
             Label label = new Label();
             label.ID = Name + "-Label";
@@ -71,7 +72,7 @@ namespace N2.Templates.Details
             cb.Text = CreateNewText;
             panel.Controls.Add(cb);
 
-            return base.AddTo(container);
+            base.AddTo(context);
         }
 
         private string GetTextBoxName()

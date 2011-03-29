@@ -5,6 +5,7 @@ using N2.Installation;
 using N2.Integrity;
 using N2.Persistence;
 using N2.Web.Drawing;
+using N2.Engine;
 
 namespace N2.Edit.FileSystem.Items
 {
@@ -15,7 +16,7 @@ namespace N2.Edit.FileSystem.Items
     [RestrictParents(typeof(AbstractDirectory))]
     [Editables.EditableUpload]
 	[N2.Web.Template("info", "{ManagementUrl}/Files/FileSystem/File.aspx")]
-    public class File : AbstractNode, IActiveContent, IDependentEntity<IEditUrlManager>
+	public class File : AbstractNode, IActiveContent, IInjectable<IEditUrlManager>
     {
 		IEditUrlManager managementPaths;
 

@@ -142,6 +142,8 @@
     <Compile Include="Configuration\VppElement.cs" />
     <Compile Include="Configuration\ZipVppElement.cs" />
     <Compile Include="Configuration\ZipVppCollection.cs" />
+    <Compile Include="Definitions\ContainableContext.cs" />
+    <Compile Include="Definitions\IBindable.cs" />
     <Compile Include="Definitions\ISystemNode.cs" />
     <Compile Include="Details\WithEditableVisibilityAttribute.cs" />
     <Compile Include="Details\EditableMetaTagAttribute.cs" />
@@ -165,6 +167,8 @@
     <Compile Include="Definitions\AllowedDefinitionQuery.cs" />
     <Compile Include="Definitions\AllowedDefinitionResult.cs" />
     <Compile Include="Edit\IPlaceHolderAccessor.cs" />
+    <Compile Include="Edit\Workflow\EditorCollectionBinder.cs" />
+    <Compile Include="Engine\IInjectableOfT.cs" />
     <Compile Include="Engine\Providers\HttpContextProvider.cs" />
     <Compile Include="Engine\Providers\ViewEngineCollectionProvider.cs" />
     <Compile Include="Engine\Providers\VirtualPathProviderProvider.cs" />
@@ -549,7 +553,7 @@
     <Compile Include="Persistence\EntityDependencySetter.cs" />
     <Compile Include="Persistence\ContentDependencyInjector.cs" />
     <Compile Include="Persistence\IDependencySetter.cs" />
-    <Compile Include="Persistence\IDependentEntityOfT.cs" />
+    <Compile Include="Obsolete\IDependentEntityOfT.cs" />
     <Compile Include="Persistence\ItemNotifier.cs" />
     <Compile Include="Persistence\Proxying\DetailPropertyInterceptor.cs" />
     <Compile Include="Persistence\Proxying\EmptyProxyFactory.cs" />

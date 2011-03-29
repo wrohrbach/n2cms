@@ -35,6 +35,7 @@ using N2.Definitions;
 using N2.Persistence.Proxying;
 using NHibernate.Search.Attributes;
 using System.Runtime.CompilerServices;
+using N2.Engine;
 
 namespace N2
 {
@@ -66,12 +67,13 @@ namespace N2
 	public abstract class ContentItem : IComparable, 
 		IComparable<ContentItem>, 
 		ICloneable,
-		IDependentEntity<IUrlParser>, 
+		IInjectable<IUrlParser>, 
 		INode, 
 		IUpdatable<ContentItem>, 
 		IInterceptableType,
 		INameable,
-		IPlaceable
+		IPlaceable,
+		IBindable
     {
         #region Private Fields
         private int id;
@@ -1033,9 +1035,9 @@ namespace N2
 
 		#endregion
 
-		#region IDependentEntity<IUrlParser> Members
+		#region IInjectable<IUrlParser> Members
 
-		void IDependentEntity<IUrlParser>.Set(IUrlParser dependency)
+		void IInjectable<IUrlParser>.Set(IUrlParser dependency)
 		{
 			urlParser = dependency;
 		}

@@ -28,7 +28,7 @@ namespace N2.Tests.Fakes
 			}
 		}
 
-		public void Dispose()
+		public new void Dispose()
 		{
 			if(session != null)
 				session.Clear();

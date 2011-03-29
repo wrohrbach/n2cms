@@ -8,6 +8,7 @@ using N2.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using N2.Web;
 using NHibernate.Criterion;
+using N2.Definitions;
 
 namespace N2.Details
 {
@@ -33,7 +34,7 @@ namespace N2.Details
 		{
 		}
 
-		public override Control AddTo(Control container)
+		public override void AddTo(ContainableContext context)
 		{
 			HtmlTableCell labelCell = new HtmlTableCell();
 			Label label = AddLabel(labelCell);
@@ -59,9 +60,9 @@ namespace N2.Details
 			HtmlTable editorTable = new HtmlTable();
 			editorTable.Attributes["class"] = "editDetail";
 			editorTable.Controls.Add(row);
-			container.Controls.Add(editorTable);
 			
-			return editor;
+			context.Container.Controls.Add(editorTable);
+			context.Control = editor;
 		}
 
 		protected override void ModifyEditor(TextBox tb)

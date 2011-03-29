@@ -7,6 +7,7 @@ using System.Web.UI.HtmlControls;
 using N2.Web.UI.WebControls;
 using N2.Engine;
 using N2.Web;
+using N2.Definitions;
 
 namespace N2.Edit.Web.UI.Controls
 {
@@ -22,7 +23,8 @@ namespace N2.Edit.Web.UI.Controls
 
 			var start = Engine.Resolve<IUrlParser>().StartPage;
 			var root = Engine.Persister.Get(Engine.Resolve<IHost>().CurrentSite.RootItemID);
-			foreach (ToolbarPluginAttribute plugin in Engine.EditManager.GetPlugins<ToolbarPluginAttribute>(Engine.Resolve<IWebContext>().User))
+			var wc = Engine.Resolve<IWebContext>();
+			foreach (ToolbarPluginAttribute plugin in Engine.EditManager.GetPlugins<ToolbarPluginAttribute>(wc.User))
             {
                 if ((plugin.Area & Area) != Area)
 					continue;
@@ -50,7 +52,8 @@ namespace N2.Edit.Web.UI.Controls
 
 						foreach (var option in options)
 						{
-							option.AddTo(menu);
+							var context = ContainableContext.WithContainer(option.Name, wc.CurrentPage, menu);
+							option.AddTo(context);
 						}
 						continue;
 					}

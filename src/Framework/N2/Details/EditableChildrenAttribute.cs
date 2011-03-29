@@ -4,6 +4,7 @@ using System.Web.UI;
 using N2.Web.UI;
 using N2.Web.UI.WebControls;
 using N2.Edit.Workflow;
+using N2.Definitions;
 
 namespace N2.Details
 {
@@ -95,10 +96,10 @@ namespace N2.Details
             }
 		}
 
-		public override Control AddTo(Control container)
+		public override void AddTo(ContainableContext context)
 		{
-			Control panel = AddPanel(container);
-			return AddEditor(panel);
+			Control panel = AddPanel(context.Container);
+			context.Control = AddEditor(panel);
 		}
 
 		protected override Control AddEditor(Control container)

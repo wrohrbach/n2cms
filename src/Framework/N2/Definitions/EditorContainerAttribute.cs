@@ -103,9 +103,8 @@ namespace N2.Definitions
 		#region Abstract Methods
 
 		/// <summary>Adds the container to a parent container and returns it.</summary>
-		/// <param name="container">The parent container onto which to add the container defined by this interface.</param>
-		/// <returns>The newly added container.</returns>
-		public abstract Control AddTo(Control container);
+		/// <param name="context">The context containing parent container onto which to add the container defined by this interface.</param>
+		public abstract void AddTo(ContainableContext context);
 
 		#endregion
 

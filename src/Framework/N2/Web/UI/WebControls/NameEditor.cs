@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -159,9 +160,10 @@ namespace N2.Web.UI.WebControls
 			{
 				try
 				{
-					if (itemEditor.AddedEditors.ContainsKey(TitleEditorName))
+					var context = itemEditor.Editors.FirstOrDefault(c => c.PropertyName == TitleEditorName);
+					if (context != null)
 					{
-                        TextBox tbTitle = itemEditor.AddedEditors[TitleEditorName] as TextBox;
+                        TextBox tbTitle = context.Control as TextBox;
                         keepUpdated.Visible = ShowKeepUpdated ?? Config.ShowKeepUpdated;
 
 						string titleID = tbTitle.ClientID;

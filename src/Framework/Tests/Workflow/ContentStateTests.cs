@@ -29,7 +29,7 @@ namespace N2.Tests.Workflow
         IVersionManager versionManager;
         IPersister persister;
 
-        Dictionary<string, Control> editors;
+		ContainableContext[] editors;
         IPrincipal admin = CreatePrincipal("admin");
 
         [SetUp]
@@ -43,8 +43,7 @@ namespace N2.Tests.Workflow
             editManager = engine.Resolve<IEditManager>();
             versionManager = engine.Resolve<IVersionManager>();
 
-            editors = new Dictionary<string, Control>();
-            editors["Title"] = new TextBox { Text = "New title" };
+			editors = new[] { ContainableContext.WithControl("Title", null, new TextBox { Text = "New title" }) };
         }
 
         // definition manager
@@ -67,7 +66,8 @@ namespace N2.Tests.Workflow
 
         // edit manater
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void VersionAndSave_SetsItemStateTo_Published()
         {
 			var item = activator.CreateInstance<StatefulItem>(null);
@@ -77,7 +77,8 @@ namespace N2.Tests.Workflow
             Assert.That(item.State, Is.EqualTo(ContentState.Published));
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void SaveOnly_SetsItemStateTo_Published()
         {
 			var item = activator.CreateInstance<StatefulItem>(null);
@@ -87,7 +88,8 @@ namespace N2.Tests.Workflow
             Assert.That(item.State, Is.EqualTo(ContentState.Published));
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void SaveOnly_OnVersion_SetsItemStateTo_Draft()
         {
 			var item = activator.CreateInstance<StatefulItem>(null);
@@ -99,7 +101,8 @@ namespace N2.Tests.Workflow
             Assert.That(result.State, Is.EqualTo(ContentState.Draft));
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void SaveVersion_OnPublishedItem_SetsVersionedItemStateTo_Unpublished()
         {
 			var item = activator.CreateInstance<StatefulItem>(null);
@@ -119,7 +122,8 @@ namespace N2.Tests.Workflow
             Assert.That(version.State, Is.EqualTo(ContentState.Draft));
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void SaveAsMaster_SetsItemState_Published()
         {
 			var item = activator.CreateInstance<StatefulItem>(null);
@@ -131,7 +135,8 @@ namespace N2.Tests.Workflow
             Assert.That(result.State, Is.EqualTo(ContentState.Published));
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void VersionOnly_SetsVersionedItemStateTo_Draft()
         {
 			var item = activator.CreateInstance<StatefulItem>(null);
@@ -142,7 +147,8 @@ namespace N2.Tests.Workflow
             Assert.That(result.State, Is.EqualTo(ContentState.Draft));
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void VersionOnly_DoesntAffect_MasterVersionState()
         {
 			var item = activator.CreateInstance<StatefulItem>(null);
@@ -152,7 +158,8 @@ namespace N2.Tests.Workflow
             Assert.That(item.State, Is.EqualTo(ContentState.Published));
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void VersionOnly_DoesntAffect_MasterVersionIndex()
         {
 			var item = activator.CreateInstance<StatefulItem>(null);
@@ -163,24 +170,26 @@ namespace N2.Tests.Workflow
             Assert.That(item.VersionIndex, Is.EqualTo(initialIndex));
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void VersionOnly_SavedItem_IncrementsVersionIndex()
         {
 			var item = activator.CreateInstance<StatefulItem>(null);
             editManager.Save(item, editors, ItemEditorVersioningMode.SaveOnly, admin);
-            editors["Title"] = new TextBox { Text = "New title 2" };
+			editors = new[] { ContainableContext.WithControl("Title", item, new TextBox { Text = "New title 2" }) };
             var version = editManager.Save(item, editors, ItemEditorVersioningMode.VersionOnly, admin);
 
             Assert.That(version.VersionIndex, Is.EqualTo(item.VersionIndex + 1));
         }
 
-        [Test]
+		[Test]
+		[Obsolete]
         public void Publish_DoesntAffect_OldVersionsIndex()
         {
 			var item = activator.CreateInstance<StatefulItem>(null);
             editManager.Save(item, editors, ItemEditorVersioningMode.SaveOnly, admin);
-            int initialIndex = item.VersionIndex;
-            editors["Title"] = new TextBox { Text = "New title 2" };
+			int initialIndex = item.VersionIndex;
+			editors = new[] { ContainableContext.WithControl("Title", item, new TextBox { Text = "New title 2" }) };
             var nextVersion = editManager.Save(item, editors, ItemEditorVersioningMode.VersionAndSave, admin);
 
             Assert.That(nextVersion.VersionIndex, Is.EqualTo(initialIndex + 1));

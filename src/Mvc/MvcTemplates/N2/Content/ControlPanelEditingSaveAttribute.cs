@@ -1,9 +1,13 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using N2.Web.UI;
 using N2.Web.UI.WebControls;
+using N2.Definitions;
+using N2.Edit.Workflow;
+using N2.Edit.Web;
 
 namespace N2.Edit
 {
@@ -34,7 +38,17 @@ namespace N2.Edit
 
 					foreach (IItemEditor itemEditor in itemEditors)
 					{
-						Context.Current.EditManager.Save(itemEditor.CurrentItem, itemEditor.AddedEditors, itemEditor.VersioningMode, container.Page.User);
+						var definition = Engine.Definitions.GetDefinition(itemEditor.CurrentItem);
+						Engine.Resolve<CommandDispatcher>().Publish(
+							new CommandContext(
+								definition,
+								itemEditor.CurrentItem,
+								Interfaces.Viewing,
+								container.Page.User,
+								new EditorCollectionBinder(definition, itemEditor.Editors),
+								new NullValidator<CommandContext>()));
+								
+						//Context.Current.EditManager.Save(itemEditor.CurrentItem, itemEditor.Editors, itemEditor.VersioningMode, container.Page.User);
 					}
 
 					RedirectTo(container.Page, context.Selected);
@@ -44,22 +58,22 @@ namespace N2.Edit
 
 		protected virtual IList<IItemEditor> GetEditedItems(Page page)
 		{
-			Dictionary<ContentItem, IDictionary<string, Control>> itemsEditors = new Dictionary<ContentItem, IDictionary<string, Control>>();
+			Dictionary<ContentItem, IList<ContainableContext>> itemsEditors = new Dictionary<ContentItem, IList<ContainableContext>>();
 
 			IEnumerable<IEditableEditor> editors = ItemUtility.FindInChildren<IEditableEditor>(page);
 			foreach (EditableDisplay ed in editors)
 			{
 				if (!itemsEditors.ContainsKey(ed.CurrentItem))
 				{
-					itemsEditors[ed.CurrentItem] = new Dictionary<string, Control>();
+					itemsEditors[ed.CurrentItem] = new List<ContainableContext>();
 				}
-				itemsEditors[ed.CurrentItem][ed.PropertyName] = ed.Editor;
+				itemsEditors[ed.CurrentItem].Add(new ContainableContext(ed.PropertyName, ed.CurrentItem) { Control = ed.Editor, Container = ed });
 			}
 
 			IList<IItemEditor> items = new List<IItemEditor>();
 			foreach (ContentItem item in itemsEditors.Keys)
 			{
-				items.Add(new OnPageItemEditor(ItemEditorVersioningMode.VersionAndSave, item.ZoneName, itemsEditors[item], item));
+				items.Add(new OnPageItemEditor(ItemEditorVersioningMode.VersionAndSave, item.ZoneName, itemsEditors[item].ToArray(), item));
 			}
 			return items;
 		}
@@ -79,7 +93,7 @@ namespace N2.Edit
 		private class OnPageItemEditor : IItemEditor
 		{
 			public OnPageItemEditor(ItemEditorVersioningMode versioningMode, string zoneName,
-			                        IDictionary<string, Control> addedEditors, ContentItem currentItem)
+			                        ContainableContext[] addedEditors, ContentItem currentItem)
 			{
 				this.versioningMode = versioningMode;
 				this.zoneName = zoneName;
@@ -91,7 +105,7 @@ namespace N2.Edit
 
 			private ItemEditorVersioningMode versioningMode = ItemEditorVersioningMode.VersionAndSave;
 			private string zoneName = string.Empty;
-			private readonly IDictionary<string, Control> addedEditors = new Dictionary<string, Control>();
+			private readonly ContainableContext[] addedEditors;
 			private ContentItem currentItem;
 
 			public ItemEditorVersioningMode VersioningMode
@@ -106,7 +120,7 @@ namespace N2.Edit
 				set { zoneName = value; }
 			}
 
-			public IDictionary<string, Control> AddedEditors
+			public ContainableContext[] Editors
 			{
 				get { return addedEditors; }
 			}

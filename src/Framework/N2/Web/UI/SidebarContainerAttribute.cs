@@ -18,21 +18,20 @@ namespace N2.Web.UI
 
 		public string HeadingText { get; set; }
 
-		public override System.Web.UI.Control AddTo(System.Web.UI.Control container)
+		public override void AddTo(ContainableContext context)
 		{
-			var accessor = ItemUtility.FindInParents<Edit.IPlaceHolderAccessor>(container);
+			var accessor = ItemUtility.FindInParents<Edit.IPlaceHolderAccessor>(context.Container);
 			if (accessor == null)
-				return null;
+				return;
 			
 			Box box = new Box();
 			box.ID = Name;
 			box.HeadingText = HeadingText;
 			var placeholder = accessor.GetPlaceHolder("Sidebar");
 			if (placeholder == null)
-				return null;
+				return;
 
-			placeholder.Controls.Add(box);
-			return box;
+			context.Add(box);
 		}
 	}
 }

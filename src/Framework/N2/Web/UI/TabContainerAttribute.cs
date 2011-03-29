@@ -68,15 +68,15 @@ namespace N2.Web.UI
 		/// <summary>Adds the tab panel to a parent container and returns it.</summary>
 		/// <param name="container">The parent container onto which to add the container defined by this interface.</param>
 		/// <returns>The newly added tab panel.</returns>
-		public override Control AddTo(Control container)
+		public override void AddTo(ContainableContext context)
 		{
 			TabPanel p = new TabPanel();
 			p.ID = Name;
 			p.ToolTip = GetLocalizedText("TabText") ?? TabText;
 			p.RegisterTabCss = registerTabCss;
 			p.CssClass = CssClass ?? p.CssClass;
-			container.Controls.Add(p);
-			return p;
+
+			context.Add(p);
 		}
 	}
 }

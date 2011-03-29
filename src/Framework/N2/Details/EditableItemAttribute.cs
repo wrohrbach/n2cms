@@ -104,11 +104,11 @@ namespace N2.Details
 		{
 		}
 
-		public override Control AddTo(Control container)
+		public override void AddTo(ContainableContext context)
 		{
-			Control panel = AddPanel(container);
+			Control panel = AddPanel(context.Container);
 
-			return AddEditor(panel);
+			context.Control = AddEditor(panel);
 		}
 
 		protected override Control AddEditor(Control panel)

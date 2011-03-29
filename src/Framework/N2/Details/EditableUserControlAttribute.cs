@@ -90,16 +90,16 @@ namespace N2.Details
 			}
 		}
 
-		public override Control AddTo(Control container)
+		public override void AddTo(ContainableContext context)
 		{
 			if (string.IsNullOrEmpty(Title))
 			{
-				Control editor = AddEditor(container);
-				AddHelp(container);
-				return editor;
+				context.Control = AddEditor(context.Container);
+				AddHelp(context.Container);
+				return;
 			}
 
-			return base.AddTo(container);
+			base.AddTo(context);
 		}
 
 		protected override Control AddEditor(Control container)
