@@ -84,6 +84,7 @@ namespace N2.Tests.Edit
 			}
 		}
 
+		[Obsolete]
 		protected IItemEditor SimulateEditor(ContentItem item, ItemEditorVersioningMode versioningMode)
 		{
 			IItemEditor editor = mocks.StrictMock<IItemEditor>();
