@@ -168,6 +168,7 @@
     <Compile Include="Definitions\AllowedDefinitionResult.cs" />
     <Compile Include="Edit\IPlaceHolderAccessor.cs" />
     <Compile Include="Edit\Workflow\EditorCollectionBinder.cs" />
+    <Compile Include="Edit\Workflow\IContentBinderOfT.cs" />
     <Compile Include="Engine\IInjectableOfT.cs" />
     <Compile Include="Engine\Providers\HttpContextProvider.cs" />
     <Compile Include="Engine\Providers\ViewEngineCollectionProvider.cs" />
@@ -538,7 +539,6 @@
     <Compile Include="Edit\Workflow\Commands\UseNewVersionCommand.cs" />
     <Compile Include="Edit\Workflow\Commands\ValidateCommand.cs" />
     <Compile Include="Edit\Workflow\ContentState.cs" />
-    <Compile Include="Edit\Workflow\IBinderOfT.cs" />
     <Compile Include="Edit\Workflow\ICommandFactory.cs" />
     <Compile Include="Edit\Workflow\Interfaces.cs" />
     <Compile Include="Edit\Workflow\IValidatorOfT.cs" />

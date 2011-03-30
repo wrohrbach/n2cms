@@ -6,7 +6,7 @@ using N2.Definitions;
 
 namespace N2.Edit.Workflow
 {
-	public class EditorCollectionBinder : IBinder<CommandContext>
+	public class EditorCollectionBinder : IContentForm<CommandContext>
 	{
 		ItemDefinition definition;
 		IEnumerable<ContainableContext> editors;

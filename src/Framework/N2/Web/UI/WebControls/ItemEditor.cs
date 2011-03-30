@@ -21,11 +21,12 @@ using N2.Engine;
 using N2.Edit.Workflow;
 using System.Web;
 using N2.Persistence;
+using N2.Edit.Web;
 
 namespace N2.Web.UI.WebControls
 {
 	/// <summary>A form that generates an edit interface for content items.</summary>
-	public class ItemEditor : WebControl, INamingContainer, IItemEditor, IBinder<CommandContext>, IPlaceHolderAccessor
+	public class ItemEditor : WebControl, INamingContainer, IItemEditor, IContentForm<CommandContext>, IPlaceHolderAccessor
 	{
 		#region Constructor
 
@@ -209,6 +210,11 @@ namespace N2.Web.UI.WebControls
 			UpdateObject(new CommandContext(GetDefinition(), CurrentItem, "Unknown", Page.User, this, new NullValidator<CommandContext>()));
 		}
 
+		public CommandContext CreateCommandContext()
+		{
+			return new CommandContext(Definition ?? GetDefinition(), CurrentItem, Interfaces.Editing, Page.User, this, new PageValidator<CommandContext>(Page));
+		}
+
 		#endregion
 
 		#region IItemContainer Members
@@ -238,7 +244,7 @@ namespace N2.Web.UI.WebControls
 				EnsureChildControls();
 				if (ZoneName != null && ZoneName != value.Content.ZoneName)
 					value.Content.ZoneName = ZoneName;
-				foreach (string key in AddedEditors.Keys)
+				foreach (string key in Editors.Select(e => e.PropertyName))
 					BinderContext.GetDefinedDetails().Add(key);
 				var modifiedDetails = EditAdapter.UpdateItem(value.Definition, value.Content, Editors, Page.User);
 				if (modifiedDetails.Length == 0)

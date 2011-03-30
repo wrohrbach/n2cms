@@ -116,43 +116,43 @@ namespace N2.Edit
 
         protected void OnPublishCommand(object sender, CommandEventArgs e)
 		{
-			var ctx = new CommandContext(ie.GetDefinition(), ie.CurrentItem, Interfaces.Editing, User, ie, new PageValidator<CommandContext>(Page));
-			ctx.Parameters["MoveBefore"] = Request["before"];
-			ctx.Parameters["MoveAfter"] = Request["after"];
-			Commands.Publish(ctx);
+			var cc = ie.CreateCommandContext();
+			cc.Parameters["MoveBefore"] = Request["before"];
+			cc.Parameters["MoveAfter"] = Request["after"];
+			Commands.Publish(cc);
 
-			HandleResult(ctx, Request["returnUrl"], Engine.GetContentAdapter<NodeAdapter>(ctx.Content).GetPreviewUrl(ctx.Content));
+			HandleResult(cc, Request["returnUrl"], Engine.GetContentAdapter<NodeAdapter>(cc.Content).GetPreviewUrl(cc.Content));
 		}
 
     	protected void OnPreviewCommand(object sender, CommandEventArgs e)
 		{
-			var ctx = new CommandContext(ie.GetDefinition(), ie.CurrentItem, Interfaces.Editing, User, ie, new PageValidator<CommandContext>(Page));
-			Commands.Save(ctx);
+			var cc = ie.CreateCommandContext();
+			Commands.Save(cc);
 
 			string returnUrl = Request["returnUrl"];
 			if (!string.IsNullOrEmpty(returnUrl))
 			{
-				returnUrl = Url.Parse(returnUrl).AppendQuery("preview", ctx.Content.ID);
+				returnUrl = Url.Parse(returnUrl).AppendQuery("preview", cc.Content.ID);
 			}
 
-			Url previewUrl = Engine.GetContentAdapter<NodeAdapter>(ctx.Content).GetPreviewUrl(ctx.Content);
-			previewUrl = previewUrl.AppendQuery("preview", ctx.Content.ID);
-			if(ctx.Content.VersionOf != null)
-				previewUrl = previewUrl.AppendQuery("original", ctx.Content.VersionOf.ID);
+			Url previewUrl = Engine.GetContentAdapter<NodeAdapter>(cc.Content).GetPreviewUrl(cc.Content);
+			previewUrl = previewUrl.AppendQuery("preview", cc.Content.ID);
+			if(cc.Content.VersionOf != null)
+				previewUrl = previewUrl.AppendQuery("original", cc.Content.VersionOf.ID);
 
-			HandleResult(ctx, returnUrl, previewUrl);
+			HandleResult(cc, returnUrl, previewUrl);
 		}
 
 		protected void OnSaveUnpublishedCommand(object sender, CommandEventArgs e)
 		{
-			var ctx = new CommandContext(ie.GetDefinition(), ie.CurrentItem, Interfaces.Editing, User, ie, new PageValidator<CommandContext>(Page));
-            Commands.Save(ctx);
+			CommandContext cc = ie.CreateCommandContext();
+            Commands.Save(cc);
 
-			Url redirectTo = ManagementPaths.GetEditExistingItemUrl(ctx.Content);
+			Url redirectTo = ManagementPaths.GetEditExistingItemUrl(cc.Content);
 			if (!string.IsNullOrEmpty(Request["returnUrl"]))
 				redirectTo = redirectTo.AppendQuery("returnUrl", Request["returnUrl"]);
 			
-			HandleResult(ctx, redirectTo);
+			HandleResult(cc, redirectTo);
         }
 
         protected void OnSaveFuturePublishCommand(object sender, CommandEventArgs e)
@@ -345,18 +345,15 @@ namespace N2.Edit
 			ucInfo.DataBind();
 		}
 
-		private ContentItem SaveVersion()
-		{
-			ItemEditorVersioningMode mode = (ie.CurrentItem.VersionOf == null) ? ItemEditorVersioningMode.VersionOnly : ItemEditorVersioningMode.SaveOnly;
-			return ie.Save(ie.CurrentItem, mode);
-		}
-
         private ContentItem SaveVersionForFuturePublishing()
         {
             // Explicitly setting the current versions FuturePublishDate.
             // The database will end up with two new rows in the detail table.
             // On row pointing to the master and one to the latest/new version.
-            var item = SaveVersion();
+			var cc = ie.CreateCommandContext();
+			Commands.Save(cc);
+
+			var item = cc.Content;
 			if (item.VersionOf == null)
 				item.Published = dpFuturePublishDate.SelectedDate;
 			else

@@ -5,6 +5,7 @@ using N2.Web.UI;
 using N2.Web.UI.WebControls;
 using N2.Edit.Workflow;
 using N2.Definitions;
+using N2.Edit.Web;
 
 namespace N2.Details
 {
@@ -67,7 +68,11 @@ namespace N2.Details
 						IItemEditor fallbackEditor = ItemUtility.FindInParents<IItemEditor>(editor.Parent);
 						if (fallbackEditor != null)
 						{
-							fallbackEditor.Saved += delegate { childEditor.Save(); };
+							fallbackEditor.Saved += delegate 
+							{
+								var cc = childEditor.CreateCommandContext();
+								Engine.Resolve<CommandDispatcher>().Publish(cc);
+							};
 						}
 					}
 				}
