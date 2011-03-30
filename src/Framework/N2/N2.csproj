@@ -168,7 +168,7 @@
     <Compile Include="Definitions\AllowedDefinitionResult.cs" />
     <Compile Include="Edit\IPlaceHolderAccessor.cs" />
     <Compile Include="Edit\Workflow\EditorCollectionBinder.cs" />
-    <Compile Include="Edit\Workflow\IContentBinderOfT.cs" />
+    <Compile Include="Edit\Workflow\IContentFormOfT.cs" />
     <Compile Include="Engine\IInjectableOfT.cs" />
     <Compile Include="Engine\Providers\HttpContextProvider.cs" />
     <Compile Include="Engine\Providers\ViewEngineCollectionProvider.cs" />
