@@ -73,6 +73,8 @@ namespace N2.Definitions
 					if (existing.Equals(convertedValue))
 						return;
 				}
+				else if (existing.Equals(value))
+					return;
 			}
 
 			Binder.Set(Content, PropertyName, value);
