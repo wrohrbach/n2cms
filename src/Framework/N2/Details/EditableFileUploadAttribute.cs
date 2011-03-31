@@ -9,6 +9,7 @@ using System.Web;
 using System.IO;
 using System.Web.UI.HtmlControls;
 using N2.Web;
+using N2.Definitions;
 
 namespace N2.Details
 {
@@ -56,15 +57,15 @@ namespace N2.Details
 
 
 
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			SelectorUploadComposite composite = (SelectorUploadComposite)editor;
+			SelectorUploadComposite composite = (SelectorUploadComposite)context.Control;
 
 			HttpPostedFile postedFile = composite.UploadControl.PostedFile;
 			if (postedFile != null && !string.IsNullOrEmpty(postedFile.FileName))
 			{
 				IFileSystem fs = Engine.Resolve<IFileSystem>();
-				string directoryPath = Engine.Resolve<IDefaultDirectory>().GetDefaultDirectory(item);
+				string directoryPath = Engine.Resolve<IDefaultDirectory>().GetDefaultDirectory((ContentItem)context.Content);
 				if (!fs.DirectoryExists(directoryPath))
 					fs.CreateDirectory(directoryPath);
 
@@ -73,23 +74,18 @@ namespace N2.Details
 
 				fs.WriteFile(filePath, postedFile.InputStream);
 
-				item[Name] = Url.ToAbsolute(filePath);
-				return true;
-			} 
-
-			if (composite.SelectorControl.Url != item[Name] as string)
-			{
-				item[Name] = composite.SelectorControl.Url;
-				return true;
+				context.SetValue(Url.ToAbsolute(filePath));
 			}
-
-			return false;
+			else
+			{
+				context.SetValue(Url.ToAbsolute(composite.SelectorControl.Url));
+			}
 		}
 
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			SelectorUploadComposite composite = (SelectorUploadComposite)editor;
-			composite.Select(item[Name] as string);
+			SelectorUploadComposite composite = (SelectorUploadComposite)context.Control;
+			composite.Select(context.GetValue<string>());
 		}
 
 		protected override Control AddEditor(Control container)

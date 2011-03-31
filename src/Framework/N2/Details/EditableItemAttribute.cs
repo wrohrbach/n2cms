@@ -93,15 +93,11 @@ namespace N2.Details
 
 		#region Methods
 
-		public override bool UpdateItem(ContentItem parentItem, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			ItemEditor itemEditor = editor as ItemEditor;
-			ItemEditor parentEditor = ItemUtility.FindInParents<ItemEditor>(editor.Parent);
-			return itemEditor.UpdateObject(parentEditor.BinderContext.CreateNestedContext(itemEditor, itemEditor.CurrentItem, itemEditor.GetDefinition()));
-		}
-
-		public override void UpdateEditor(ContentItem item, Control editor)
-		{
+			ItemEditor itemEditor = context.Control as ItemEditor;
+			ItemEditor parentEditor = ItemUtility.FindInParents<ItemEditor>(context.Control.Parent);
+			context.WasUpdated = itemEditor.UpdateObject(parentEditor.BinderContext.CreateNestedContext(itemEditor, itemEditor.CurrentItem, itemEditor.GetDefinition()));
 		}
 
 		public override void AddTo(ContainableContext context)

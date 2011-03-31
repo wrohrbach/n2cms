@@ -2,6 +2,7 @@
 using System.Web.UI;
 using N2.Web.UI.WebControls;
 using System.Web.UI.WebControls;
+using N2.Definitions;
 
 namespace N2.Details
 {
@@ -37,21 +38,16 @@ namespace N2.Details
 			set { showDate = value; }
 		}
 
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			DatePicker picker = (DatePicker)editor;
-			if ((DateTime?)item[Name] != picker.SelectedDate)
-			{
-				item[Name] = picker.SelectedDate;
-				return true;
-			}
-			return false;
+			DatePicker picker = (DatePicker)context.Control;
+			picker.SelectedDate = context.GetValue<DateTime?>();
 		}
 
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			DatePicker picker = (DatePicker) editor;
-			picker.SelectedDate = (DateTime?)item[Name];
+			DatePicker picker = (DatePicker)context.Control;
+			context.SetValue(picker.SelectedDate);
 		}
 
 		protected override Control AddEditor(Control container)

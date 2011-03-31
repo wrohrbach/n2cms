@@ -93,16 +93,10 @@ namespace N2.Details
 		/// <summary>Updates the item with the values from the editor.</summary>
 		/// <param name="item">The item to update.</param>
 		/// <param name="editor">The editor contorl whose values to update the item with.</param>
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			object editorValue = this.GetEditorValue(editor);
-			object itemValue = item[this.Name];
-			if (!AreEqual(editorValue, itemValue))
-			{
-				item[Name] = editorValue;
-				return true;
-			}
-			return false;
+			object editorValue = this.GetEditorValue(context.Control);
+			context.SetValue(editorValue);
 		}
 
 		#region UpdateItem Helper Methods
@@ -118,9 +112,9 @@ namespace N2.Details
 		/// <summary>Updates the editor with the values from the item.</summary>
 		/// <param name="item">The item that contains values to assign to the editor.</param>
 		/// <param name="editor">The editor to load with a value.</param>
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			this.SetEditorValue(editor, item[this.Name]);
+			this.SetEditorValue(context.Control, context.GetValue<object>());
 		}
 
 		#region UpdateEditor Helper Methods

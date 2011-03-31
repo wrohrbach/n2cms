@@ -80,7 +80,7 @@ namespace N2.Tests.Details
         {
             item.DaysInteger = 5;
 
-            intEditable.UpdateEditor(item, intEditor);
+			intEditable.UpdateEditor(ContainableContext.WithControl(intEditable.Name, item, intEditor));
 
             Assert.That(intEditor.SelectedValue, Is.EqualTo("5"));
         }
@@ -90,7 +90,7 @@ namespace N2.Tests.Details
         {
             item.DaysString = "Fri";
 
-            stringEditable.UpdateEditor(item, stringEditor);
+			stringEditable.UpdateEditor(ContainableContext.WithControl(stringEditable.Name, item, stringEditor));
 
             Assert.That(stringEditor.SelectedValue, Is.EqualTo("5"));
         }
@@ -100,7 +100,7 @@ namespace N2.Tests.Details
         {
             item.DaysEnum = enumDays.Fri;
 
-            enumEditable.UpdateEditor(item, enumEditor);
+            enumEditable.UpdateEditor(ContainableContext.WithControl(enumEditable.Name, item, enumEditor));
 
             Assert.That(enumEditor.SelectedValue, Is.EqualTo("5"));
         }
@@ -112,7 +112,7 @@ namespace N2.Tests.Details
         {
             intEditor.SelectedValue = "5";
 
-            intEditable.UpdateItem(item, intEditor);
+			intEditable.UpdateItem(ContainableContext.WithControl(intEditable.Name, item, intEditor));
 
             Assert.That(item.DaysInteger, Is.EqualTo(5));
         }
@@ -122,7 +122,7 @@ namespace N2.Tests.Details
         {
             stringEditor.SelectedValue = "5";
 
-            stringEditable.UpdateItem(item, stringEditor);
+			stringEditable.UpdateItem(ContainableContext.WithControl(stringEditable.Name, item, stringEditor));
 
             Assert.That(item.DaysString, Is.EqualTo("Fri"));
         }
@@ -132,7 +132,7 @@ namespace N2.Tests.Details
         {
             enumEditor.SelectedValue = "5";
 
-            enumEditable.UpdateItem(item, enumEditor);
+			enumEditable.UpdateItem(ContainableContext.WithControl(enumEditable.Name, item, enumEditor));
 
             Assert.That(item.DaysEnum, Is.EqualTo(enumDays.Fri));
         }

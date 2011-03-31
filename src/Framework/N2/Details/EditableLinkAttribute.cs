@@ -4,6 +4,7 @@ using System.Text;
 using System.Web.UI;
 using N2.Web;
 using N2.Web.UI.WebControls;
+using N2.Definitions;
 
 namespace N2.Details
 {
@@ -39,24 +40,19 @@ namespace N2.Details
 			return selector;
 		}
 		
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			ItemSelector selector = (ItemSelector)editor;
-			selector.SelectedItem = item[Name] as ContentItem;
-			var pi = item.GetType().GetProperty(Name);
+			ItemSelector selector = (ItemSelector)context.Control;
+			selector.SelectedItem = context.GetValue<ContentItem>();
+			var pi = context.Content.GetType().GetProperty(Name);
 			if(pi != null)
 				selector.RequiredType = pi.PropertyType;
 		}
 		
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			ItemSelector selector = (ItemSelector)editor;
-			if (selector.SelectedItem != item[Name] as ContentItem)
-			{
-				item[Name] = selector.SelectedItem;
-				return true;
-			}
-			return false;
+			ItemSelector selector = (ItemSelector)context.Control;
+			context.SetValue(selector.SelectedItem);
 		}
 		
 		#region IDisplayable Members

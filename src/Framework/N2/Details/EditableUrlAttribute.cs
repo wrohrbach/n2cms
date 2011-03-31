@@ -1,6 +1,7 @@
 using System;
 using System.Web.UI;
 using N2.Web.UI.WebControls;
+using N2.Definitions;
 
 namespace N2.Details
 {
@@ -49,21 +50,16 @@ namespace N2.Details
 		/// <summary>Defines whether the managementUrls should be stored as app- or server relative.</summary>
 		public UrlRelativityMode RelativeTo { get; set; }
 
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			UrlSelector selector = (UrlSelector)editor;
-			if(selector.Url != (string)item[Name])
-			{
-				item[Name] = RelativeTo == UrlRelativityMode.Absolute ? selector.Url : N2.Web.Url.ToRelative(selector.Url);
-				return true;
-			}
-			return false;
+			UrlSelector selector = (UrlSelector)context.Control;
+			context.SetValue(RelativeTo == UrlRelativityMode.Absolute ? selector.Url : N2.Web.Url.ToRelative(selector.Url));
 		}
 
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			UrlSelector selector = (UrlSelector)editor;
-			selector.Url = (string)item[Name];
+			UrlSelector selector = (UrlSelector)context.Control;
+			selector.Url = context.GetValue<string>();
 		}
 
 		protected override Control AddEditor(Control container)

@@ -18,6 +18,6 @@ namespace N2.Details
 
 		/// <summary>Applies modifications to the given item.</summary>
 		/// <param name="item">The item to modify.</param>
-		void Modify(IBindable item);
+		void Modify(object content, IBinder binder);
 	}
 }

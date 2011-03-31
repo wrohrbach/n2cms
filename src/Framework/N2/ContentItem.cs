@@ -73,7 +73,7 @@ namespace N2
 		IInterceptableType,
 		INameable,
 		IPlaceable,
-		IBindable
+		IActiveBindable
     {
         #region Private Fields
         private int id;

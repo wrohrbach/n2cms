@@ -136,5 +136,13 @@ namespace N2.Persistence.NH
 			if (value.Name != key)
 				throw new InvalidOperationException("Cannot add value with differnet name (" + key + " != " + value.Name + ")");
 		}
+
+		void ICollection<T>.CopyTo(T[] array, int arrayIndex)
+		{
+			for (int i = arrayIndex; i < Count; i++)
+			{
+				array.SetValue(this[i], i);
+			}
+		}
 	}
 }

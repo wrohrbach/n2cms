@@ -25,11 +25,12 @@ namespace N2.Templates.Mvc.Details
 			set { questionText = value; }
 		}
 
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			ContentItem questionItem = Utility.GetProperty(item, Name) as ContentItem;
+			ContentItem questionItem = context.GetValue<ContentItem>();
 
-			CheckBox cb = editor.FindControl(GetCheckBoxName()) as CheckBox;
+			CheckBox cb = context.Control.FindControl(GetCheckBoxName()) as CheckBox;
+			var item = (ContentItem)context.Content;
 			if (cb.Checked || questionItem == null)
 			{
 				questionItem = new SingleSelect();
@@ -37,21 +38,24 @@ namespace N2.Templates.Mvc.Details
 				Utility.UpdateSortOrder(item.Children);
 			}
 
-			TextBox tb = editor.FindControl(GetTextBoxName()) as TextBox;
+			TextBox tb = context.Control.FindControl(GetTextBoxName()) as TextBox;
 			questionItem.Title = tb.Text;
-		
-			return base.UpdateItem(questionItem, editor);
+
+			var cc2 = ContainableContext.WithControl(null, questionItem, context.Control);
+			base.UpdateItem(cc2);
+			context.WasUpdated = cc2.WasUpdated;
 		}
 
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			ContentItem questionItem = Utility.GetProperty(item, Name) as ContentItem 
-			                           ?? new SingleSelect();
+			ContentItem questionItem = context.GetValue<ContentItem>() ?? new SingleSelect();
 
-			TextBox tb = editor.FindControl(GetTextBoxName()) as TextBox;
+			TextBox tb = context.Control.FindControl(GetTextBoxName()) as TextBox;
 			tb.Text = questionItem.Title;
 
-			base.UpdateEditor(questionItem, editor);
+			var cc2 = ContainableContext.WithControl(null, questionItem, context.Control);
+			base.UpdateEditor(cc2);
+			context.WasUpdated = cc2.WasUpdated;
 		}
 
 		public override void AddTo(ContainableContext context)

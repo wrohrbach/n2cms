@@ -4,6 +4,7 @@ using System.Text;
 using System.Web.UI;
 using N2.Web.UI.WebControls;
 using System.Web.UI.WebControls;
+using N2.Definitions;
 
 namespace N2.Details
 {
@@ -67,21 +68,16 @@ namespace N2.Details
 			return selector;
 		}
 		
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			FileSelector selector = (FileSelector)editor;
-			selector.Url = item[Name] as string;
+			FileSelector selector = (FileSelector)context.Control;
+			selector.Url = context.GetValue<string>();
 		}
 
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			FileSelector selector = (FileSelector)editor;
-			if (selector.Url != item[Name] as string)
-			{
-				item[Name] = selector.Url;
-				return true;
-			}
-			return false;
+			FileSelector selector = (FileSelector)context.Control;
+			context.SetValue(selector.Url);
 		}
 
 		#region IDisplayable Members

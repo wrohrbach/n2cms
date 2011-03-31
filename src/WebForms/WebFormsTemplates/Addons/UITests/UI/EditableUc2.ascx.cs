@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 namespace N2.Addons.UITests.UI
 {
-	public partial class EditableUc2 : System.Web.UI.UserControl, N2.Edit.IContentBinder
+	public partial class EditableUc2 : System.Web.UI.UserControl, N2.Edit.IContentForm
 	{
 		protected override void OnInit(EventArgs e)
 		{

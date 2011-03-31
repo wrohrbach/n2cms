@@ -5,6 +5,7 @@ using System.Web.UI;
 using N2.Web;
 using N2.Configuration;
 using System.Configuration;
+using N2.Definitions;
 
 namespace N2.Details
 {
@@ -88,21 +89,17 @@ namespace N2.Details
 		/// <summary>Sets focus on the name editor.</summary>
 		public bool Focus { get; set; }
 
-    	public override bool UpdateItem(ContentItem item, Control editor)
+    	public override void UpdateItem(ContainableContext context)
 		{
-			NameEditor ne = (NameEditor)editor;
-			if (item.Name != ne.Text)
-			{
-				item.Name = ne.Text;
-				return true;
-			}
-			return false;
+			NameEditor ne = (NameEditor)context.Control;
+			context.SetValue(ne.Text);
 		}
 
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			NameEditor ne = (NameEditor)editor;
-			ne.Text = item.Name;
+			ContentItem item = ((ContentItem)context.Content);
+			NameEditor ne = (NameEditor)context.Control;
+			ne.Text = context.GetValue<string>();
 			ne.Prefix = "/";
 			ne.Suffix = item.Extension;
             try

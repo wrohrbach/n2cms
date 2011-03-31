@@ -41,6 +41,8 @@ namespace N2
 					return sourceConverter.ConvertTo(value, destinationType);
 				if (destinationType.IsEnum && value is int)
 					return Enum.ToObject(destinationType, (int)value);
+				if ((destinationType == typeof(int) || destinationType == typeof(short) || destinationType == typeof(long)) && value.GetType().IsEnum)
+					return (int)value;
 				if (!destinationType.IsAssignableFrom(value.GetType()))
 					try
 					{

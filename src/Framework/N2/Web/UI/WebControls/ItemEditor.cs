@@ -141,7 +141,7 @@ namespace N2.Web.UI.WebControls
 		public void ApplyContentModifications(ContentState changingTo)
 		{
 			foreach (var d in GetDefinition().ContentModifiers.Where(cm => (cm.ChangingTo & changingTo) == changingTo))
-				d.Modify(currentItem);
+				d.Modify(currentItem, new DefaultBinder());
 		}
 
 		/// <summary>Gets or sets the zone name that the edited item will be set to.</summary>

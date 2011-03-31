@@ -70,7 +70,7 @@ namespace N2.Definitions
 
 		private IEnumerable<ContentItem> ReorderBy(ContentItem item, string sortExpression)
 		{
-			ItemList temp = new ItemList(item.Children);
+			ItemList temp = new ItemList(item.Children.ToList());
 			temp.Sort(sortExpression);
 			
 			item.Children.Clear();

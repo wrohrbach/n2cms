@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using N2.Details;
+using N2.Definitions;
 
 namespace N2.Templates.Details
 {
@@ -12,22 +13,16 @@ namespace N2.Templates.Details
 		{
 		}
 
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			DropDownList ddl = (DropDownList)editor;
-			if (ddl.SelectedValue != item[Name] as string)
-			{
-				item[Name] = ddl.SelectedValue;
-				return true;
-			}
-			return false;
+			DropDownList ddl = (DropDownList)context.Control;
+			context.SetValue(ddl.SelectedValue);
 		}
 
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			DropDownList ddl = (DropDownList)editor;
-			if (ddl.Items.FindByValue(item[Name] as string) != null)
-				ddl.SelectedValue = item[Name] as string;
+			DropDownList ddl = (DropDownList)context.Control;
+			ddl.SelectedValue = context.GetValue<string>();
 		}
 
 		protected override Control AddEditor(Control container)

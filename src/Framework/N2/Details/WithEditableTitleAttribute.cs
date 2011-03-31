@@ -2,6 +2,7 @@ using System;
 using System.Web.UI.WebControls;
 using System.Web.UI;
 using N2.Web.UI.WebControls;
+using N2.Definitions;
 
 namespace N2.Details
 {
@@ -45,21 +46,16 @@ namespace N2.Details
 
 		public string CssClass { get; set; }
 
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			TextBox tb = (TextBox)editor;
-			if (item.Title != tb.Text)
-			{
-				item.Title = tb.Text;
-				return true;
-			}
-			return false;
+			TextBox tb = (TextBox)context.Control;
+			context.SetValue(tb.Text);
 		}
 
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			TextBox titleTextBox = (TextBox)editor;
-			titleTextBox.Text = item.Title;
+			TextBox titleTextBox = (TextBox)context.Control;
+			titleTextBox.Text = context.GetValue<string>();
 
 			if (Focus)
                 titleTextBox.PreRender += delegate { titleTextBox.Focus(); };

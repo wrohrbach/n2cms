@@ -143,8 +143,11 @@
     <Compile Include="Configuration\ZipVppElement.cs" />
     <Compile Include="Configuration\ZipVppCollection.cs" />
     <Compile Include="Definitions\ContainableContext.cs" />
-    <Compile Include="Definitions\IBindable.cs" />
+    <Compile Include="Definitions\DefaultBinder.cs" />
+    <Compile Include="Definitions\IBinder.cs" />
     <Compile Include="Definitions\ISystemNode.cs" />
+    <Compile Include="Definitions\IBindable.cs" />
+    <Compile Include="Details\EditableNumberAttribute.cs" />
     <Compile Include="Details\WithEditableVisibilityAttribute.cs" />
     <Compile Include="Details\EditableMetaTagAttribute.cs" />
     <Compile Include="Details\IContentModifier.cs" />
@@ -502,7 +505,7 @@
     <Compile Include="Engine\AttributeInfo.cs" />
     <Compile Include="Edit\FileEventArgs.cs" />
     <Compile Include="Edit\FileSystem\MappedFileSystem.cs" />
-    <Compile Include="Edit\IContentBinder.cs" />
+    <Compile Include="Edit\IContentForm.cs" />
     <Compile Include="Edit\INodeProvider.cs" />
     <Compile Include="Edit\Installation\DatabaseStatus.cs" />
     <Compile Include="Edit\Installation\InstallationManager.cs" />

@@ -12,14 +12,17 @@ namespace N2.Definitions
 		{
 		}
 
-		public ContainableContext(string propertyName, IBindable content)
+		public ContainableContext(string propertyName, object content)
 		{
 			PropertyName = propertyName;
 			Content = content;
+			this.Binder = new DefaultBinder();
 		}
 
 		public string PropertyName { get; set; }
-		public IBindable Content { get; set; }
+		public object Content { get; set; }
+		public IBinder Binder { get; set; }
+
 		public bool WasUpdated { get; set; }
 
 		public Control Control { get; set; }
@@ -31,14 +34,49 @@ namespace N2.Definitions
 			Control = editor;
 		}
 
-		public static ContainableContext WithContainer(string propertyName, IBindable model, Control container)
+		public static ContainableContext WithContainer(string propertyName, object model, Control container)
 		{
 			return new ContainableContext(propertyName, model) { Container = container };
 		}
 
-		public static ContainableContext WithControl(string propertyName, IBindable model, Control control)
+		public static ContainableContext WithControl(string propertyName, object model, Control control)
 		{
 			return new ContainableContext(propertyName, model) { Control = control };
+		}
+
+		public T GetValue<T>()
+		{
+			return GetValue<T>(PropertyName);
+		}
+
+		public T GetValue<T>(string propertyName)
+		{
+			return Binder.Get<T>(Content, PropertyName);
+		}
+
+		public void SetValue<T>(T value)
+		{
+			SetValue<T>(PropertyName, value);
+		}
+
+		public void SetValue<T>(string propertyName, T value)
+		{
+			object existing = Binder.Get(Content, propertyName);
+			if (existing == null && value == null)
+				return;
+
+			if (value != null && existing != null)
+			{
+				if (value.GetType() != existing.GetType())
+				{
+					object convertedValue = Utility.Convert(value, existing.GetType());
+					if (existing.Equals(convertedValue))
+						return;
+				}
+			}
+
+			Binder.Set(Content, PropertyName, value);
+			WasUpdated |= true;
 		}
 	}
 }

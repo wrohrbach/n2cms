@@ -141,6 +141,7 @@ namespace N2.Details
 		/// <param name="item">The object to update.</param>
 		/// <param name="editor">The editor contorl whose values to update the object with.</param>
 		/// <returns>True if the item was changed (and needs to be saved).</returns>
+		[Obsolete("Use UpdateItem(ContainableContext)")]
 		public virtual bool UpdateItem(ContentItem item, Control editor)
 		{
 			return false;
@@ -149,6 +150,7 @@ namespace N2.Details
 		/// <summary>Updates the editor with data from the item.</summary>
 		/// <param name="item">The content item containing the values to bind to the editor.</param>
 		/// <param name="editor">The editor to be bound with data from the item.</param>
+		[Obsolete("Use UpdateEditor(ContainableContext)")]
 		public virtual void UpdateEditor(ContentItem item, Control editor)
 		{
 		}
@@ -481,10 +483,10 @@ namespace N2.Details
 			get { return ContentState.New; }
 		}
 
-		void IContentModifier.Modify(IBindable item)
+		void IContentModifier.Modify(object content, IBinder binder)
 		{
 			if (DefaultValue != null)
-				item[Name] = DefaultValue;
+				binder.Set(content, Name, DefaultValue);
 		}
 
 		#endregion

@@ -29,11 +29,11 @@ namespace N2.Details
 			get { return ContentState.New; }
 		}
 
-		public void Modify(IBindable item)
+		public void Modify(object content, IBinder binder)
 		{
 			if (Name == null)
 				return;
-			item[Name] = Value;
+			binder.Set(content, Name, Value);
 		}
 
 		#endregion

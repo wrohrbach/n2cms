@@ -5,29 +5,30 @@ using N2.Details;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Security;
+using N2.Definitions;
 
 namespace N2.Security.Details
 {
 	public class EditableRolesAttribute : AbstractEditableAttribute
 	{
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			CheckBoxList cbl = editor as CheckBoxList;
+			CheckBoxList cbl = context.Control as CheckBoxList;
 			List<string> roles = new List<string>();
 			foreach (ListItem li in cbl.Items)
 				if (li.Selected)
 					roles.Add(li.Value);
 
-			DetailCollection dc = item.GetDetailCollection(Name, true);
+			DetailCollection dc = ((ContentItem)context.Content).GetDetailCollection(Name, true);
 			dc.Replace(roles);
 
-			return true;
+			context.WasUpdated = true;
 		}
 
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			CheckBoxList cbl = editor as CheckBoxList;
-			DetailCollection dc = item.GetDetailCollection(Name, false);
+			CheckBoxList cbl = context.Control as CheckBoxList;
+			DetailCollection dc = ((ContentItem)context.Content).GetDetailCollection(Name, false);
 			if (dc != null)
 			{
 				foreach (string role in dc)

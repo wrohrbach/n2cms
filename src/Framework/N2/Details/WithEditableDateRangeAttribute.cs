@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web.UI;
 using N2.Web.UI.WebControls;
+using N2.Definitions;
 
 namespace N2.Details
 {
@@ -48,23 +49,18 @@ namespace N2.Details
             return range;
         }
 
-        public override void UpdateEditor(ContentItem item, Control editor)
+        public override void UpdateEditor(ContainableContext context)
         {
-            DateRange range = (DateRange)editor;
-            range.From = (DateTime?)item[this.Name];
-            range.To = (DateTime?)item[this.NameEndRange];
+			DateRange range = (DateRange)context.Control;
+			range.From = context.GetValue<DateTime?>(Name);
+			range.To = context.GetValue<DateTime?>(NameEndRange);
         }
 
-        public override bool UpdateItem(ContentItem item, Control editor)
+        public override void UpdateItem(ContainableContext context)
         {
-            DateRange range = editor as DateRange;
-            if ((DateTime?)item[this.Name] != range.From || (DateTime?)item[this.NameEndRange] != range.To)
-            {
-                item[this.Name] = range.From;
-                item[this.NameEndRange] = range.To;
-                return true;
-            }
-            return false;
+			DateRange range = context.Control as DateRange;
+			context.SetValue(range.From);
+			context.SetValue(NameEndRange, range.To);
         }
 
 		#region IWritingDisplayable Members

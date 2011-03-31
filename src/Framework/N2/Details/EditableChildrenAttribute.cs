@@ -39,10 +39,10 @@ namespace N2.Details
 			set { zoneName = value; }
 		}
 
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
 			bool updated = false;
-			ItemEditorList listEditor = (ItemEditorList)editor;
+			ItemEditorList listEditor = (ItemEditorList)context.Control;
 			for (int i = 0; i < listEditor.ItemEditors.Count; i++)
 			{
 				if (listEditor.DeletedIndexes.Contains(i))
@@ -56,7 +56,7 @@ namespace N2.Details
 				else
 				{
 					ItemEditor childEditor = listEditor.ItemEditors[i];
-					ItemEditor parentEditor = ItemUtility.FindInParents<ItemEditor>(editor.Parent);
+					ItemEditor parentEditor = ItemUtility.FindInParents<ItemEditor>(context.Control.Parent);
 					if (parentEditor != null)
 					{
 						var subContext = parentEditor.BinderContext.CreateNestedContext(childEditor, childEditor.CurrentItem, childEditor.GetDefinition());
@@ -65,7 +65,7 @@ namespace N2.Details
 					}
 					else
 					{
-						IItemEditor fallbackEditor = ItemUtility.FindInParents<IItemEditor>(editor.Parent);
+						IItemEditor fallbackEditor = ItemUtility.FindInParents<IItemEditor>(context.Control.Parent);
 						if (fallbackEditor != null)
 						{
 							fallbackEditor.Saved += delegate 
@@ -77,17 +77,17 @@ namespace N2.Details
 					}
 				}
 			}
-			return updated || listEditor.DeletedIndexes.Count > 0 || listEditor.AddedTypes.Count > 0;
+			context.WasUpdated = updated || listEditor.DeletedIndexes.Count > 0 || listEditor.AddedTypes.Count > 0;
 		}
 
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			ItemEditorList listEditor = (ItemEditorList)editor;
-			listEditor.ParentItem = item;
+			ItemEditorList listEditor = (ItemEditorList)context.Control;
+			listEditor.ParentItem = (ContentItem)context.Content;
 			listEditor.ZoneName = ZoneName;
 
             // filtering of children by property generic type
-            PropertyInfo info = item.GetContentType().GetProperty(Name);
+            PropertyInfo info = context.Content.GetType().GetProperty(Name);
             if (info != null)
             {
                 foreach (Type argument in info.PropertyType.GetGenericArguments())

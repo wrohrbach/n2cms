@@ -58,35 +58,30 @@ namespace N2.Details
 		#endregion
 
 
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			if (editor is IContentBinder)
+			if (context.Control is IContentForm)
 			{
-				IContentBinder binder = editor as IContentBinder;
-				return binder.UpdateObject(item);
+				IContentForm binder = context.Control as IContentForm;
+				context.WasUpdated = binder.UpdateObject((ContentItem)context.Content);
 			}
 			else
 			{
-				var current = item[Name];
-				var updated = Utility.GetProperty(editor, UserControlPropertyName);
-				if (current == updated)
-					return false;
-
-				item[Name] = updated;
-				return true;
+				var updated = Utility.GetProperty(context.Control, UserControlPropertyName);
+				context.SetValue<object>(updated);
 			}
 		}
 
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			if (editor is IContentBinder)
+			if (context.Control is IContentForm)
 			{
-				IContentBinder binder = editor as IContentBinder;
-				binder.UpdateInterface(item);
+				IContentForm binder = context.Control as IContentForm;
+				binder.UpdateInterface((ContentItem)context.Content);
 			}
 			else
 			{
-				Utility.SetProperty(editor, UserControlPropertyName, item[Name]);
+				Utility.SetProperty(context.Control, UserControlPropertyName, context.GetValue<object>());
 			}
 		}
 

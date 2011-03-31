@@ -3,15 +3,17 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using N2.Details;
 using N2.Templates.Mvc.Models.Parts;
+using N2.Definitions;
 
 namespace N2.Templates.Details
 {
     public class EditableOptionsAttribute : AbstractEditableAttribute
     {
-        public override bool UpdateItem(ContentItem item, Control editor)
+        public override void UpdateItem(ContainableContext context)
         {
-            TextBox tb = (TextBox)editor;
+            TextBox tb = (TextBox)context.Control;
             string[] rows = tb.Text.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+			var item = (ContentItem)context.Content;
             for (int i = item.Children.Count-1; i >= 0; --i)
             {
                 int index = Array.FindIndex(rows, delegate(string row)
@@ -34,7 +36,7 @@ namespace N2.Templates.Details
                 child.SortOrder = i;
             }
 
-            return true;
+			context.WasUpdated = true;
         }
 
         private static ContentItem FindChild(ContentItem item, string row)
@@ -47,11 +49,12 @@ namespace N2.Templates.Details
             return null;
         }
 
-        public override void UpdateEditor(ContentItem item, Control editor)
+        public override void UpdateEditor(ContainableContext context)
         {
-            TextBox tb = (TextBox)editor;
+			TextBox tb = (TextBox)context.Control;
             tb.Text = string.Empty;
-            foreach (ContentItem child in item.GetChildren())
+			var item = (ContentItem)context.Content;
+			foreach (ContentItem child in item.GetChildren())
             {
                 tb.Text += child.Title + Environment.NewLine;
             }

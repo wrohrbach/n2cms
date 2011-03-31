@@ -22,7 +22,7 @@ namespace N2.Details
 	/// }
 	/// </example>
 	[AttributeUsage(AttributeTargets.Property)]
-	public class EditableFreeTextAreaAttribute : EditableTextBoxAttribute, IRelativityTransformer
+	public class EditableFreeTextAreaAttribute : EditableTextAttribute, IRelativityTransformer
 	{
 		public EditableFreeTextAreaAttribute()
 			: base(null, 100)
@@ -88,14 +88,14 @@ namespace N2.Details
 			return rfv;
 		}
 
-        public override void UpdateEditor(ContentItem item, Control editor)
+        public override void UpdateEditor(ContainableContext context)
         {
-            base.UpdateEditor(item, editor);
+			base.UpdateEditor(context);
 
-            FreeTextArea fta = (FreeTextArea)editor;
+			FreeTextArea fta = (FreeTextArea)context.Control;
 
-			if (item is IDocumentBaseSource)
-				fta.DocumentBaseUrl = (item as IDocumentBaseSource).BaseUrl;
+			if (context.Content is IDocumentBaseSource)
+				fta.DocumentBaseUrl = (context.Content as IDocumentBaseSource).BaseUrl;
         }
 
 		#region IRelativityTransformer Members

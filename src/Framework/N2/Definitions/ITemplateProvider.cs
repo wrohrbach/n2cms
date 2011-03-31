@@ -39,7 +39,7 @@ namespace N2.Definitions
 
 			return providers
 				.SelectMany(tp => tp.GetTemplates(contentType))
-				.FirstOrDefault(td => td.Name == templateName);
+				.FirstOrDefault(td => (td.Name ?? "") == (templateName ?? ""));
 		}
 
 		public static TemplateDefinition GetTemplate(this IEnumerable<ITemplateProvider> providers, ContentItem item)

@@ -34,6 +34,20 @@ namespace N2.Details
 		/// <summary>The type of enum listed by this editor.</summary>
 		public Type EnumType { get; set; }
 
+		public override void UpdateEditor(Definitions.ContainableContext context)
+		{
+			ListControl ddl = context.Control as ListControl;
+			var value = context.GetValue<object>();
+			if (value == null)
+				return;
+			if (value is int || value is short || value is long)
+				ddl.SelectedValue = value.ToString();
+			if (value.GetType().IsEnum)
+				ddl.SelectedValue = ((int)value).ToString();
+			if (value is string)
+				ddl.SelectedValue = ((int)Enum.Parse(EnumType, value as string)).ToString();
+		}
+
         protected override System.Web.UI.WebControls.ListItem[] GetListItems()
         {
             Array values = Enum.GetValues(EnumType);

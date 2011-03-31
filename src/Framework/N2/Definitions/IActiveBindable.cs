@@ -6,9 +6,9 @@ using System.Text;
 namespace N2.Definitions
 {
 	/// <summary>
-	/// Represents an object that can be bound from/to values by key.
+	/// Represents an object takes responsibility for getting and setting values by key.
 	/// </summary>
-	public interface IBindable
+	public interface IActiveBindable
 	{
 		/// <summary>Gets or sets a value by key.</summary>
 		/// <param name="key">The key whose value to get or set.</param>

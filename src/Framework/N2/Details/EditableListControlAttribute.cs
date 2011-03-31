@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Web.UI.WebControls;
 using System.Web.UI;
+using N2.Definitions;
 
 namespace N2.Details
 {
@@ -21,25 +22,11 @@ namespace N2.Details
 		{
 		}
 
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			ListControl ddl = editor as ListControl;
-			string current = GetValue(item);
+			ListControl ddl = context.Control as ListControl;
 			object value = GetValue(ddl);
-			if (!value.Equals(current))
-			{
-				if (value != null && value.Equals(item[Name]))
-					item[Name] = null;
-				else
-					item[Name] = value;
-				return true;
-			}
-			else if (current != null && current.Equals(DefaultValue))
-			{
-				item[Name] = value;
-				return true;
-			}
-			return false;
+			context.SetValue(value);
 		}
 
         /// <summary>Gets the object to store as content from the drop down list editor.</summary>
@@ -50,13 +37,10 @@ namespace N2.Details
             return ddl.SelectedValue;
         }
 
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			ListControl ddl = editor as ListControl;
-			if (item[Name] != null)
-			{
-                ddl.SelectedValue = GetValue(item);
-			}
+			ListControl ddl = context.Control as ListControl;
+			ddl.SelectedValue = context.GetValue<string>();
         }
 
         /// <summary>Gets a string value from the drop down list editor from the content item.</summary>

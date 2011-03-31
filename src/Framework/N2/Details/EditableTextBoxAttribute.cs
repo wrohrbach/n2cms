@@ -21,6 +21,7 @@
 using System;
 using System.Web.UI.WebControls;
 using System.Web.UI;
+using N2.Definitions;
 
 namespace N2.Details
 {
@@ -28,14 +29,14 @@ namespace N2.Details
 	/// Attribute used to mark properties as editable. This attribute is predefined to use 
 	/// the <see cref="System.Web.UI.WebControls.TextBox"/> web control as editor.</summary>
 	/// <example>
-	/// [N2.Details.EditableTextBox("Heading", 80)]
+	/// [N2.Details.EditableText("Heading", 80)]
 	/// public virtual string Heading
 	/// {
 	/// 	get { return GetDetail("Heading", "")); }
 	/// 	set { SetDetail("Heading", value, ""); }
 	/// }
 	/// 
-	/// [N2.Details.EditableTextBox("Published", 80)]
+	/// [N2.Details.EditableText("Published", 80)]
 	/// public override DateTime Published
 	/// {
     ///     get { return base.Published; } 
@@ -43,14 +44,14 @@ namespace N2.Details
 	/// }
 	/// </example>
 	[AttributeUsage(AttributeTargets.Property)]
-	public class EditableTextBoxAttribute : AbstractEditableAttribute, IDisplayable, IWritingDisplayable
+	public class EditableTextAttribute : AbstractEditableAttribute, IDisplayable, IWritingDisplayable
 	{
 		private int maxLength = 0;
 		private int columns = 0;
 		private int rows = 0;
 		private TextBoxMode textMode = TextBoxMode.SingleLine;
 
-		public EditableTextBoxAttribute()
+		public EditableTextAttribute()
 			: base(null, 50)
 		{
 		}
@@ -58,7 +59,7 @@ namespace N2.Details
 		/// <summary>Initializes a new instance of the EditableTextBoxAttribute class.</summary>
 		/// <param name="title">The label displayed to editors</param>
 		/// <param name="sortOrder">The order of this editor</param>
-		public EditableTextBoxAttribute(string title, int sortOrder)
+		public EditableTextAttribute(string title, int sortOrder)
 			: base(title, sortOrder)
 		{
 		}
@@ -67,7 +68,7 @@ namespace N2.Details
 		/// <param name="title">The label displayed to editors</param>
 		/// <param name="sortOrder">The order of this editor</param>
 		/// <param name="maxLength">The max length of the text box.</param>
-		public EditableTextBoxAttribute(string title, int sortOrder, int maxLength)
+		public EditableTextAttribute(string title, int sortOrder, int maxLength)
 			: this(title, sortOrder)
 		{
 			this.maxLength = maxLength;
@@ -122,24 +123,16 @@ namespace N2.Details
 
 		#endregion
 
-		public override bool UpdateItem(ContentItem item, Control editor)
+		public override void UpdateItem(ContainableContext context)
 		{
-			TextBox tb = editor as TextBox;
-			string value = tb.Text;
-			if (DefaultValue is string && tb.Text == (string)DefaultValue)
-				value = null;
-			if(!AreEqual(value, item[Name]))
-			{
-				item[Name] = value;
-				return true;
-			}
-			return false;
+			TextBox tb = context.Control as TextBox;
+			context.SetValue(tb.Text);
 		}
 
-		public override void UpdateEditor(ContentItem item, Control editor)
+		public override void UpdateEditor(ContainableContext context)
 		{
-			TextBox tb = editor as TextBox;
-			tb.Text = Utility.Convert<string>(item[Name]) ?? DefaultValue as string;
+			TextBox tb = context.Control as TextBox;
+			tb.Text = context.GetValue<string>();
 		}
 
 		/// <summary>Creates a text box editor.</summary>
@@ -179,5 +172,37 @@ namespace N2.Details
 		}
 
 		#endregion
+	}
+
+	/// <summary>
+	/// Attribute used to mark properties as editable. This attribute is predefined to use 
+	/// the <see cref="System.Web.UI.WebControls.TextBox"/> web control as editor.</summary>
+	/// <example>
+	/// <remarks>Prefer using [EditableText] over this attribute since this will be deprecated eventually.</remarks>
+	[AttributeUsage(AttributeTargets.Property)]
+	public class EditableTextBoxAttribute : EditableTextAttribute
+	{
+		/// <summary>Initializes a new instance of the EditableTextBoxAttribute class.</summary>
+		public EditableTextBoxAttribute()
+			: base(null, 50)
+		{
+		}
+
+		/// <summary>Initializes a new instance of the EditableTextBoxAttribute class.</summary>
+		/// <param name="title">The label displayed to editors</param>
+		/// <param name="sortOrder">The order of this editor</param>
+		public EditableTextBoxAttribute(string title, int sortOrder)
+			: base(title, sortOrder)
+		{
+		}
+
+		/// <summary>Initializes a new instance of the EditableTextBoxAttribute class.</summary>
+		/// <param name="title">The label displayed to editors</param>
+		/// <param name="sortOrder">The order of this editor</param>
+		/// <param name="maxLength">The max length of the text box.</param>
+		public EditableTextBoxAttribute(string title, int sortOrder, int maxLength)
+			: base(title, sortOrder, maxLength)
+		{
+		}
 	}
 }
