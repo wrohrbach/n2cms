@@ -9,19 +9,39 @@ using N2.Web;
 
 namespace N2.Templates.Mvc.Areas.Blog.Controllers
 {
+    /// <summary>
+    /// Controller for blog posts.
+    /// </summary>
     [Controls(typeof(BlogPost))]
     public class BlogPostController : TemplatesControllerBase<BlogPost>
     {
+        /// <summary>
+        /// The Index action.
+        /// </summary>
+        /// <returns>
+        /// The Action Result.
+        /// </returns>
         public override ActionResult Index()
         {
             return View(CurrentItem);
         }
-
+        
+        /// <summary>
+        /// Blogs the comment input form.
+        /// </summary>
+        /// <returns>
+        /// The return value.
+        /// </returns>
         public ActionResult BlogCommentInputForm()
         {
             return View(new BlogCommentInputModel(CurrentItem));
         }
 
+        /// <summary>
+        /// Submits the specified model.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>The return value.</returns>
         [ValidateInput(false)]
         [HttpPost]
         public ActionResult Submit(BlogCommentInputModel model)

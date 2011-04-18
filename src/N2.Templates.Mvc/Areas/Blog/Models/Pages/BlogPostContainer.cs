@@ -10,6 +10,9 @@ using N2.Definitions;
 
 namespace N2.Templates.Mvc.Areas.Blog.Models.Pages
 {
+    /// <summary>
+    /// This is the model for the blog post container.
+    /// </summary>
     [PageDefinition("Blog",
         Description = "A blog. Blog posts can be added to this page.",
         SortOrder = 150,
@@ -18,13 +21,22 @@ namespace N2.Templates.Mvc.Areas.Blog.Models.Pages
     [SortChildren(SortBy.PublishedDescending)]
     [TabContainer("BlogSettings", "Blog Settings", 5)]
     [FieldSetContainer("CommentSettings", "Comment Settings", 105, ContainerName = "BlogSettings")]
-	public class BlogPostContainer : BlogBase
+    public class BlogPostContainer : BlogBase
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlogPostContainer"/> class.
+        /// </summary>
         public BlogPostContainer()
         {
             PostsPerPage = 10;
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether [enable comments].
+        /// </summary>
+        /// <value>
+        ///   <c>True</c> if [enable comments]; otherwise, <c>false</c>.
+        /// </value>
         [EditableCheckBox("", 105,
             CheckBoxText = "Enable Comments",
             ContainerName = "CommentSettings",
@@ -35,6 +47,12 @@ namespace N2.Templates.Mvc.Areas.Blog.Models.Pages
             set;
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether [show comments].
+        /// </summary>
+        /// <value>
+        ///   <c>True</c> if [show comments]; otherwise, <c>false</c>.
+        /// </value>
         [EditableCheckBox("", 106,
             CheckBoxText = "Show Comments",
             ContainerName = "CommentSettings",
@@ -45,6 +63,12 @@ namespace N2.Templates.Mvc.Areas.Blog.Models.Pages
             set;
         }
 
+        /// <summary>
+        /// Gets or sets the posts per page.
+        /// </summary>
+        /// <value>
+        /// The posts per page.
+        /// </value>
         [EditableTextBox("Posts Per Page", 110, 3,
             Columns = 5,
             ContainerName = "BlogSettings",
@@ -53,31 +77,42 @@ namespace N2.Templates.Mvc.Areas.Blog.Models.Pages
             Validate = true,
             ValidationExpression = @"^[1-9]+[0-9]*$",
             ValidationMessage = "The posts per page must be a number greater than zero.",
-            ValidationText = "*"
-            )]
+            ValidationText = "*")]
         public virtual int PostsPerPage
         {
             get;
             set;
         }
 
-        // Override Text because I don't want to show it
-        //  Remove this if you want a text input to show up in edit mode
+        /// <summary>
+        /// Gets the blog posts.
+        /// </summary>
+        public IList<BlogPost> BlogPosts
+        {
+            get { return GetChildren(new TypeFilter(typeof(BlogPost))).OfType<BlogPost>().ToList(); }
+        }
+
+        /// <summary>
+        /// Gets or sets the text.
+        /// </summary>
+        /// <value>
+        /// The text value.
+        /// </value>
+        /// <remarks>
+        /// Override Text because I don't want to show it
+        /// Remove this if you want a text input to show up in edit mode
+        /// </remarks>
         public override string Text
         {
             get
             {
                 return base.Text;
             }
+
             set
             {
                 base.Text = value;
             }
-        }
-
-        public IList<BlogPost> BlogPosts
-        {
-            get { return GetChildren(new TypeFilter(typeof(BlogPost))).OfType<BlogPost>().ToList(); }
         }
     }
 }

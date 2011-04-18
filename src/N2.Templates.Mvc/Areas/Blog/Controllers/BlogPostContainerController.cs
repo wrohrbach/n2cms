@@ -18,18 +18,34 @@ namespace N2.Templates.Mvc.Areas.Blog.Controllers
     [Controls(typeof(Models.Pages.BlogPostContainer))]
     public class BlogPostContainerController : ContentController<Models.Pages.BlogPostContainer>
     {
-        IItemFinder finder;
+        private IItemFinder finder;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlogPostContainerController"/> class.
+        /// </summary>
+        /// <param name="finder">The finder.</param>
         public BlogPostContainerController(IItemFinder finder)
         {
             this.finder = finder;
         }
 
+        /// <summary>
+        /// The Index action.
+        /// </summary>
+        /// <returns>
+        /// The Action Result.
+        /// </returns>
         public override ActionResult Index()
         {
             var model = GetPosts(string.Empty, 1, CurrentItem.PostsPerPage);
             return View(model);
         }
 
+        /// <summary>
+        /// Pages to the specified page of blog posts.
+        /// </summary>
+        /// <param name="p">The page number.</param>
+        /// <returns>The Action Result.</returns>
         public ActionResult Page(int? p)
         {
             // Default page to 1 if null or <= 0
@@ -39,6 +55,12 @@ namespace N2.Templates.Mvc.Areas.Blog.Controllers
             return View("Index", model);
         }
 
+        /// <summary>
+        /// Returns a collection of posts based on tag number.
+        /// </summary>
+        /// <param name="t">The tag value.</param>
+        /// <param name="p">The page number.</param>
+        /// <returns>Action Result.</returns>
         public ActionResult Tag(string t, int? p)
         {
             // If tag is empty redirect to main
@@ -56,6 +78,15 @@ namespace N2.Templates.Mvc.Areas.Blog.Controllers
             return View("Index", model);
         }
 
+        /// <summary>
+        /// Gets the posts.
+        /// </summary>
+        /// <param name="tag">The tag value.</param>
+        /// <param name="page">The page number.</param>
+        /// <param name="postCount">The post count per page.</param>
+        /// <returns>
+        /// The return value.
+        /// </returns>
         private BlogPostContainerModel GetPosts(string tag, int page, int postCount)
         {
             int skip = (page - 1) * postCount;
@@ -93,7 +124,9 @@ namespace N2.Templates.Mvc.Areas.Blog.Controllers
                 IsFirst = page == 1
             };
             if (!model.IsLast)
+            {
                 model.Posts.RemoveAt(model.Posts.Count - 1);
+            }
 
             return model;
         }

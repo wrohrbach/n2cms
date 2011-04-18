@@ -6,7 +6,10 @@ using N2.Templates.Mvc.Models.Pages;
 
 namespace N2.Templates.Mvc.Areas.Blog.Models.Pages
 {
-	public abstract class BlogBase : ContentPageBase
-	{
-	}
+    /// <summary>
+    /// Blog base class for routing.
+    /// </summary>
+    public abstract class BlogBase : ContentPageBase
+    {
+    }
 }
