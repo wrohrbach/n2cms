@@ -21,7 +21,7 @@
                     <%= Html.DisplayContent(m => m.ImageCaption).WrapIn("span", new { @class = "blog-image-caption" })%>
                 </div>
             <% } %>
-            <%= (bool)ViewData["full"] == false ? Html.DisplayContent(m => m.Introduction) : Html.DisplayContent(m => m.Text)%>
+            <%= (bool)ViewData["full"] == false ? Html.DisplayContent(m => m.Introduction) : Html.DisplayContent(m => m.PostContent)%>
             <div style="clear: both;"></div>
         </div>
         <div class="blog-footer">
@@ -31,12 +31,12 @@
                    {%>
                    <a href="<%= ResolveUrl(N2.Context.Current.EditManager.GetEditExistingItemUrl(Model)) %>"><img src="<%= ResolveUrl("~/N2/Resources/icons/page_edit.png") %>" alt="Edit Post" title="Edit Post" /></a> | <a href="<%= ResolveUrl(N2.Context.Current.EditManager.GetDeleteUrl(Model)) %>"><img src="<%= ResolveUrl("~/N2/Resources/icons/cross.png") %>" alt="Delete Post" title="Delete Post" /></a><% if ((bool)ViewData["full"] == false) { %> | <% } %>
                 <% } %>
-                <% if ((bool)ViewData["full"] == false) { %><a href="<%= Model.Url %>"><%= Model.IsSummarized ? "Read More..." : "Discuss"%></a> (<%= Model.Comments.Count()%> Comments) <% } %>
+                <% if ((bool)ViewData["full"] == false) { %><a href="<%= Model.Url %>"><%= Model.IsSummarized ? "Read More..." : "Discuss"%></a> <% if((bool)ViewData["showCommentCount"] == true) { %>(<%= Model.Comments.Count()%> Comments) <% } } %>
             </div>
             <%--Display tag links--%>
             <% if (!string.IsNullOrEmpty(Model.Tags.Trim())) {
                    StringBuilder tagLinks = new StringBuilder("<div class=\"blog-tag-list\">Tags: ");
-                   string[] tags = Model.Tags.Split(new char[] { ',' });
+                   string[] tags = Model.Tags.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                    
                    foreach (string tag in tags)
                    {

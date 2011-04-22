@@ -98,7 +98,7 @@ namespace N2.Templates.Mvc.Areas.Blog.Controllers
             {
                 posts = finder.Where.Type.Eq(typeof(BlogPost))
                         .And.Parent.Eq(CurrentPage)
-                        .And.Detail("Tags").Like("%" + tag + "%")
+                        .And.Detail("Tags").Like("%," + tag + ",%")
                         .FirstResult(skip)
                         .MaxResults(take + 1)
                         .OrderBy.Published.Desc

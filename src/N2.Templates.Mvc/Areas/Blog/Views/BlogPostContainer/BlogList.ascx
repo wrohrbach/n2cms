@@ -6,9 +6,13 @@
     <%--Loop through posts--%>
     <% for(var i = 0; i < Model.Posts.Count; i++)
        {
-          //Set ViewData["full"] to false to display summarized post
-          ViewData["full"] = false;
-          Html.RenderPartial("BlogBody", Model.Posts[i]);
+            // Set ViewData["full"] to false to display summarized post
+            ViewData["full"] = false;
+           
+            // Override individual post's ShowComments value if the blog value is false (Used for hiding comment counts.)
+            ViewData["showCommentCount"] = Model.Container.ShowComments && Model.Posts[i].ShowComments;
+           
+            Html.RenderPartial("BlogBody", Model.Posts[i]);
        }
         
        // Get current action.  Pagination action will be 'Page' if we're on index.  Otherwise keep what is there

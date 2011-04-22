@@ -15,6 +15,7 @@ using N2.Web.Mvc;
 using N2.Web.UI;
 using N2.Persistence.Serialization;
 using N2.Definitions;
+using System.Text;
 
 namespace N2.Templates.Mvc.Areas.Blog.Models.Pages
 {
@@ -75,7 +76,9 @@ namespace N2.Templates.Mvc.Areas.Blog.Models.Pages
         /// <value>
         /// The text value.
         /// </value>
-        [EditableFreeTextArea("Text", 100, ContainerName = Tabs.Content)]
+        [EditableFreeTextArea("Post Text", 100, 
+            ContainerName = Tabs.Content,
+            HelpText = "Add the text ^^more^^ to separate the introduction from the whole post.")]
         public override string Text { get; set; }
 
         /// <summary>
@@ -90,13 +93,24 @@ namespace N2.Templates.Mvc.Areas.Blog.Models.Pages
         {
             get 
             { 
-                return (string)(GetDetail("Tags") ?? string.Empty); 
+                return ((string)(GetDetail("Tags") ?? string.Empty)).Trim(','); 
             }
 
             set
             {
                 string val = !string.IsNullOrEmpty(value.Trim()) ? value : "uncategorized";
-                SetDetail("Tags", val.ToLower());
+
+                // Clean up tag list
+                StringBuilder tagList = new StringBuilder(",");
+                string[] values = val.Split(new char[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (string tag in values)
+                {
+                    tagList.Append(tag.Trim())
+                           .Append(",");
+                }
+
+                SetDetail("Tags", tagList.ToString().ToLower());
             }
         }
 
@@ -123,6 +137,21 @@ namespace N2.Templates.Mvc.Areas.Blog.Models.Pages
             ContainerName = "CommentSettings",
             DefaultValue = true)]
         public virtual bool ShowComments { get; set; }
+        
+        /// <summary>
+        /// Gets the content of the post.
+        /// </summary>
+        /// <value>
+        /// The content of the post.
+        /// </value>
+        [DisplayableLiteral()]
+        public virtual string PostContent
+        {
+            get
+            {
+                return Text.Replace("^^more^^", string.Empty);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the introduction.
@@ -135,7 +164,7 @@ namespace N2.Templates.Mvc.Areas.Blog.Models.Pages
         {
             get
             {
-                return Text.Split(new string[] { "<!--more-->" }, 2, System.StringSplitOptions.None)[0];
+                return Text.Split(new string[] { "^^more^^" }, 2, System.StringSplitOptions.None)[0];
             }
 
             set 
@@ -170,7 +199,7 @@ namespace N2.Templates.Mvc.Areas.Blog.Models.Pages
         {
             get
             {
-                return Text.Split(new string[] { "<!--more-->" }, 2, System.StringSplitOptions.None).Count() > 1;
+                return Text.Split(new string[] { "^^more^^" }, 2, System.StringSplitOptions.None).Count() > 1;
             }
         }
 
